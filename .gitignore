@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 #appsettings.json
 appsettings.*
+/SCIC_BE/appsettings.json
