@@ -1,0 +1,42 @@
+
+services:
+    scic_web_server:
+        container_name: scic_web_server
+        build:
+            context: ./SCIC_BE
+            dockerfile: Dockerfile
+        ports:
+            - "8080:8080"
+            - "8081:8081"
+        depends_on:
+            - sqlserver
+
+                
+        environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        networks:
+        - productnetwork
+
+    
+    sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: scic_DB
+        environment:
+          - ACCEPT_EULA=Y
+          - SA_PASSWORD=A8*kao1i
+        ports:
+          - "1435:1433"
+        command: /opt/mssql/bin/sqlservr
+        networks:
+          - productnetwork
+        volumes:
+          - sqlvolume:/var/opt/mssql
+        restart: unless-stopped
+
+
+networks:
+  productnetwork:
+    driver: bridge
+
+volumes:
+    sqlvolume:    
