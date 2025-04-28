@@ -12,8 +12,8 @@ using SCIC_BE.Data;
 namespace SCIC_BE.Migrations
 {
     [DbContext(typeof(ScicDbContext))]
-    [Migration("20250427174046_AddUserInfo")]
-    partial class AddUserInfo
+    [Migration("20250428073710_initDatabase")]
+    partial class initDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
