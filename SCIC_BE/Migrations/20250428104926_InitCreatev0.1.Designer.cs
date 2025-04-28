@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SCIC_BE.Data;
 
@@ -11,9 +12,11 @@ using SCIC_BE.Data;
 namespace SCIC_BE.Migrations
 {
     [DbContext(typeof(ScicDbContext))]
-    partial class StudentContextModelSnapshot : ModelSnapshot
+    [Migration("20250428104926_InitCreatev0.1")]
+    partial class InitCreatev01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

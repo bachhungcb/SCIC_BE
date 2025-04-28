@@ -35,5 +35,11 @@ namespace SCIC_BE.Controllers.UserInfoControllers
             return Ok(user);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var userList = await _userInfoService.GetListUserAsync();
+            return Ok(userList);
+        }
     }
 }

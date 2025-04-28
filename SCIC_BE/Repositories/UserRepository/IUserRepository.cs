@@ -6,6 +6,7 @@ namespace SCIC_BE.Repositories.UserRepository
     {
         Task AddUserAsync(UserModel user);
         Task<UserModel> GetUserByIdAsync(Guid id);
+        Task<List<UserModel>> GetAllUsersAsync();
 
     }
 }

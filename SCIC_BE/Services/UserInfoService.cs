@@ -9,18 +9,12 @@ namespace SCIC_BE.Services
 {
     public class UserInfoService : IUserService
     {
-        private readonly IStudentInfoRepository _studentInfoRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IStudentService _studentService;
         private readonly IPasswordService _passwordService;
-        public UserInfoService(IStudentInfoRepository studentInfoRepository,
-                                IUserRepository userRepository,
-                                IStudentService studentService,
+        public UserInfoService( IUserRepository userRepository,
                                 IPasswordService passwordService)
         {
-            _studentInfoRepository = studentInfoRepository;
             _userRepository = userRepository;
-            _studentService = studentService;
             _passwordService = passwordService;
         }
 
@@ -50,6 +44,17 @@ namespace SCIC_BE.Services
             }
 
             return user;
+        }
+
+        public async Task<List<UserModel>> GetListUserAsync()
+        {
+            var userList = await _userRepository.GetAllUsersAsync();
+
+            if(userList == null)
+            {
+                return null;
+            }
+            return userList;
         }
 
     }

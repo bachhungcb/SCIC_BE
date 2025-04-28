@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Repositories\LecturerRepository\" />
+    <Folder Include="Repositories\RoleRepository\" />
   </ItemGroup>
 
 </Project>

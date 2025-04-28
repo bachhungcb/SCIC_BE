@@ -10,10 +10,10 @@ namespace SCIC_BE.Data
 
         }
 
-        public DbSet<StudentModel> StudentInfos { get; set; }
+        public DbSet<StudentModel> Student { get; set; }
         public DbSet<RoleModel> Roles { get; set; }
         public DbSet<UserModel> Users { get; set; }
-        public DbSet<LecturerModel> LecturerInfos { get; set; }
+        public DbSet<LecturerModel> Lecturer { get; set; }
         public DbSet<UserRoleModel> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -7,5 +7,6 @@ namespace SCIC_BE.Interfaces.IServices
     {
         Task CreateUserAsync(CreateUserDTO dto);
         Task<UserModel> GetUserAsync(Guid id);
+        Task<List<UserModel>> GetListUserAsync();
     }
 }

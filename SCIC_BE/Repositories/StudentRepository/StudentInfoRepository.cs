@@ -32,18 +32,18 @@ namespace SCIC_BE.Repository.StudentRepository
 
         public async Task<StudentModel> GetByUserIdAsync(Guid id)
         {
-            return await _context.StudentInfos.FirstOrDefaultAsync(s => s.UserId == id);
+            return await _context.Student.FirstOrDefaultAsync(s => s.UserId == id);
         }
 
         public async Task AddAsync(StudentModel studentInfo)
         {
-            _context.StudentInfos.Add(studentInfo);
+            _context.Student.Add(studentInfo);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(StudentModel studentInfo)
         {
-            _context.StudentInfos.Update(studentInfo);
+            _context.Student.Update(studentInfo);
             await _context.SaveChangesAsync();
         }
 
