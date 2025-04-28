@@ -6,9 +6,9 @@ namespace SCIC_BE.Repository.StudentRepository
     public interface IStudentInfoRepository
     {
         Task<List<StudentDTO>> GetAllStudentsAsync();
-        Task<StudentInfoModel> GetByUserIdAsync(Guid id);
-        Task AddAsync(StudentInfoModel studentInfo);
-        Task UpdateAsync(StudentInfoModel studentInfo);
+        Task<StudentModel> GetByUserIdAsync(Guid id);
+        Task AddAsync(StudentModel studentInfo);
+        Task UpdateAsync(StudentModel studentInfo);
         //Task DeleteAsync(Guid id);
     }
 

@@ -2,7 +2,7 @@
 
 namespace SCIC_BE.Models
 {
-    public class StudentInfoModel
+    public class StudentModel
     {
         [Key]
         public Guid UserId { get; set; } //Foreign key and Primary key

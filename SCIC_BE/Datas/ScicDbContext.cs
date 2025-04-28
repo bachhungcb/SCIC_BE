@@ -10,10 +10,10 @@ namespace SCIC_BE.Data
 
         }
 
-        public DbSet<StudentInfoModel> StudentInfos { get; set; }
+        public DbSet<StudentModel> StudentInfos { get; set; }
         public DbSet<RoleModel> Roles { get; set; }
         public DbSet<UserModel> Users { get; set; }
-        public DbSet<LecturerInfoModel> LecturerInfos { get; set; }
+        public DbSet<LecturerModel> LecturerInfos { get; set; }
         public DbSet<UserRoleModel> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,16 +35,16 @@ namespace SCIC_BE.Data
                 .HasForeignKey(ur => ur.RoleId);
 
             // Config bảng StudentInfo 1-1 với User
-            modelBuilder.Entity<StudentInfoModel>()
+            modelBuilder.Entity<StudentModel>()
                 .HasOne(s => s.User)
                 .WithOne(u => u.StudentInfo)
-                .HasForeignKey<StudentInfoModel>(s => s.UserId);
+                .HasForeignKey<StudentModel>(s => s.UserId);
 
             // Config bảng LecturerInfo 1-1 với User
-            modelBuilder.Entity<LecturerInfoModel>()
+            modelBuilder.Entity<LecturerModel>()
                 .HasOne(l => l.User)
                 .WithOne(u => u.LecturerInfo)
-                .HasForeignKey<LecturerInfoModel>(l => l.UserId);
+                .HasForeignKey<LecturerModel>(l => l.UserId);
         }
 
     }

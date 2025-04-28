@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SCIC_BE.DTO.StudentDTO;
 using SCIC_BE.Interfaces.IServices;
+using SCIC_BE.Services;
 
 
 namespace SCIC_BE.Controllers.StudentControllers
@@ -9,11 +11,13 @@ namespace SCIC_BE.Controllers.StudentControllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private readonly IStudentService _studentService;
+        private readonly StudentService _studentService;
+        private readonly UserInfoService _userInfoService;
 
-        public StudentController(IStudentService studentService)
+        public StudentController(StudentService studentService, UserInfoService userInfoService)
         {
             _studentService = studentService;
+            _userInfoService = userInfoService;
         }
 
         [HttpGet]
@@ -27,6 +31,25 @@ namespace SCIC_BE.Controllers.StudentControllers
 
             return Ok(studentList);
         }
+
+        // Tạo thông tin sinh viên
+        [HttpPost("create-student")]
+        public async Task<IActionResult> CreateStudent([FromBody] CreateStudentDTO dto)
+        {
+
+            await _studentService.CreateStudentAsync(dto);
+
+            return Ok();
+        }
+
+        // Cập nhật thông tin sinh viên
+        [HttpPut("update-student")]
+        public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudentDTO dto)
+        {
+            await _studentService.UpdateStudentInfoAsync(dto.UserId, dto.NewStudentCode);
+            return Ok();
+        }
+
 
 
     }

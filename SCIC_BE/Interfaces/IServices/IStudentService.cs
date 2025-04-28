@@ -7,6 +7,7 @@ namespace SCIC_BE.Interfaces.IServices
     public interface IStudentService
     {
         Task<List<StudentDTO>> GetListStudentAsync();
+        Task CreateStudentAsync(CreateStudentDTO dto);
         Task CreateStudentInfoAsync(Guid userId, string studentCode, DateTime enrollDate);
     }
 

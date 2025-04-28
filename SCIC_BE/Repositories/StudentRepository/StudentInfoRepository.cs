@@ -17,7 +17,7 @@ namespace SCIC_BE.Repository.StudentRepository
 
         public async Task<List<StudentDTO>> GetAllStudentsAsync()
         {
-            var students =  await _context.Set<StudentInfoModel>().Include(s => s.User).ToListAsync();
+            var students =  await _context.Set<StudentModel>().Include(s => s.User).ToListAsync();
             var studentDTOs = students.Select(s => new StudentDTO
             {
                 UserId = s.UserId,
@@ -30,18 +30,18 @@ namespace SCIC_BE.Repository.StudentRepository
             return studentDTOs;
         }
 
-        public async Task<StudentInfoModel> GetByUserIdAsync(Guid id)
+        public async Task<StudentModel> GetByUserIdAsync(Guid id)
         {
             return await _context.StudentInfos.FirstOrDefaultAsync(s => s.UserId == id);
         }
 
-        public async Task AddAsync(StudentInfoModel studentInfo)
+        public async Task AddAsync(StudentModel studentInfo)
         {
             _context.StudentInfos.Add(studentInfo);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(StudentInfoModel studentInfo)
+        public async Task UpdateAsync(StudentModel studentInfo)
         {
             _context.StudentInfos.Update(studentInfo);
             await _context.SaveChangesAsync();

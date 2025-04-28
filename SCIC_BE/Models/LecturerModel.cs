@@ -2,7 +2,7 @@
 
 namespace SCIC_BE.Models
 {
-    public class LecturerInfoModel
+    public class LecturerModel
     {
         [Key]
         public Guid UserId { get; set; }

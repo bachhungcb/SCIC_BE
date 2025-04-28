@@ -3,6 +3,6 @@
     public enum UserRoleEnums
     {
         Student = 1,
-        Lecturer = 2
+        Lecturer = 2,
     }
 }

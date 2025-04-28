@@ -31,9 +31,10 @@ builder.Services.AddControllers()
 builder.Services.AddScoped<IStudentInfoRepository,StudentInfoRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<UserRepository>();                // Đăng ký UserRepository
-
+builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<UserInfoService>();
 
 var app = builder.Build();

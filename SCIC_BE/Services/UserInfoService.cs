@@ -1,4 +1,5 @@
 ﻿using SCIC_BE.DTO.StudentDTO;
+using SCIC_BE.DTO.UserDTO;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.UserRepository;
@@ -6,49 +7,39 @@ using SCIC_BE.Repository.StudentRepository;
 
 namespace SCIC_BE.Services
 {
-    public class UserInfoService
+    public class UserInfoService : IUserService
     {
         private readonly IStudentInfoRepository _studentInfoRepository;
         private readonly IUserRepository _userRepository;
         private readonly IStudentService _studentService;
-        public UserInfoService(IStudentInfoRepository studentInfoRepository, IUserRepository userRepository, IStudentService studentService)
+        private readonly IPasswordService _passwordService;
+        public UserInfoService(IStudentInfoRepository studentInfoRepository,
+                                IUserRepository userRepository,
+                                IStudentService studentService,
+                                IPasswordService passwordService)
         {
             _studentInfoRepository = studentInfoRepository;
             _userRepository = userRepository;
             _studentService = studentService;
+            _passwordService = passwordService;
         }
 
-        public async Task CreateStudentAsync(CreateStudentDTO dto)
+        public async Task CreateUserAsync(CreateUserDTO dto)
         {
-            // Kiểm tra xem User đã tồn tại hay chưa
-            var user = await _userRepository.GetUserByIdAsync(dto.UserId);
-
-            if (user == null)
+            var user = new UserModel
             {
-                // Nếu User không tồn tại, tạo mới một User
-                user = new UserModel
-                {
-                    Id = dto.UserId,
-                    Name = dto.Name,
-                    Email = dto.Email,
-                    PasswordHash = "Testpwd"
-                    // Thêm các thuộc tính khác của User nếu cần
-                };
-                await _userRepository.AddUserAsync(user);  // Giả sử có method này trong repository
-            }
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                Email = dto.Email,
+                PasswordHash = _passwordService.HashPassword(null, dto.Password)
 
-            // Tạo thông tin sinh viên (StudentInfo) sau khi chắc chắn User tồn tại
-            var studentInfo = new StudentInfoModel
-            {
-                UserId = dto.UserId,
-                StudentCode = dto.StudentCode,
-                EnrollDate = dto.EnrollDate
             };
 
-            // Lưu thông tin sinh viên vào cơ sở dữ liệu
-            await _studentService.CreateStudentInfoAsync(dto.UserId, dto.StudentCode, dto.EnrollDate);
+            await _userRepository.AddUserAsync(user);
 
         }
+
+        
         public async Task<UserModel> GetUserAsync(Guid id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);

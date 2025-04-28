@@ -9,8 +9,8 @@
 
         //Navigation
         public ICollection<UserRoleModel> UserRoles { get; set; }
-        public StudentInfoModel StudentInfo { get; set; }
-        public LecturerInfoModel LecturerInfo { get; set; }
+        public StudentModel StudentInfo { get; set; }
+        public LecturerModel LecturerInfo { get; set; }
 
     }
 }
