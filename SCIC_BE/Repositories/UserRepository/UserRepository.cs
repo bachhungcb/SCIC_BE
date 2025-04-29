@@ -52,5 +52,22 @@ namespace SCIC_BE.Repositories.UserRepository
 
             return users;
         }
+
+        public async Task<UserModel> GetUserByEmailAsync(string email)
+        {
+            var user = await _context.Users
+                        .Include(u => u.StudentInfo)
+                        .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                        .Include(u => u.LecturerInfo)
+                        .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return user;
+        }
     }
 }

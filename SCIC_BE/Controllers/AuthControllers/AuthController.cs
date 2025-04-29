@@ -1,0 +1,107 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using SCIC_BE.DTO.AuthDTO;
+using SCIC_BE.DTO.RoleDTO;
+using SCIC_BE.DTO.UserDTO;
+using SCIC_BE.Models;
+using SCIC_BE.Repositories.RoleRepository;
+using SCIC_BE.Repositories.UserRepository;
+using SCIC_BE.Services;
+using System.Runtime.InteropServices;
+
+
+
+namespace SCIC_BE.Controllers.AuthControllers
+{
+    [Route("api/v1/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase
+    {
+        private readonly IUserRepository _userRepository;
+        private readonly IPasswordHasher<UserModel> _passwordHasher;
+        private readonly JwtService _jwtService;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IUserRoleRepository _userRoleRepository;
+
+        public AuthController(
+        IUserRepository userRepository,
+        IPasswordHasher<UserModel> passwordHasher,
+        JwtService jwtService,
+        IRoleRepository roleRepository,
+        IUserRoleRepository userRoleRepository)
+        {
+            _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
+            _jwtService = jwtService;
+            _roleRepository = roleRepository;
+            _userRoleRepository = userRoleRepository;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(CreateUserDTO dto)
+        {
+            var existingUser = await _userRepository.GetUserByEmailAsync(dto.Email);
+
+            if (existingUser != null)
+            {
+                return BadRequest("Email Already exists");
+            }
+
+            var user = new UserModel
+            {
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                Email = dto.Email,
+                PasswordHash = _passwordHasher.HashPassword(null, dto.Password)
+            };
+
+            await _userRepository.AddUserAsync(user);
+
+            var studentRole = await _roleRepository.GetRoleByNameAsync("Student");
+
+            if (studentRole == null)
+            {
+                studentRole = new RoleDTO
+                {
+                    Name = "Student"
+                };
+                await _roleRepository.AddRoleAsync(studentRole);
+            }
+
+            var userRole = new UserRoleModel
+            {
+                UserId = user.Id,
+                RoleId = studentRole.Id
+            };
+
+            await _userRoleRepository.AddAsync(userRole);
+
+            return Ok("User registered successfully with Student role");
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDTO dto)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+            if (user == null)
+                return Unauthorized("Invalid credentials");
+
+            var result = _passwordHasher.VerifyHashedPassword(null, user.PasswordHash, dto.Password);
+            if (result != PasswordVerificationResult.Success)
+                return Unauthorized("Invalid credentials");
+
+            var roles = user.UserRoles?
+                            .Where(ur => ur.Role != null)
+                            .Select(ur => ur.Role.Name)
+                            .ToList() ?? new List<string>();
+
+
+            var token = _jwtService.GenerateToken(user, roles);
+
+            return Ok(new { Token = token });
+        }
+
+    }
+}

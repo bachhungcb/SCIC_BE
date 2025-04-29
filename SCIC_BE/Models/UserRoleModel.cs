@@ -6,7 +6,7 @@
         public int RoleId { get; set; }
 
         //Navigation
-        public required UserModel User { get; set; }
-        public required RoleModel Role { get; set; }
+        public UserModel User { get; set; }
+        public RoleModel Role { get; set; }
     }
 }

@@ -12,8 +12,8 @@ using SCIC_BE.Data;
 namespace SCIC_BE.Migrations
 {
     [DbContext(typeof(ScicDbContext))]
-    [Migration("20250428073710_initDatabase")]
-    partial class initDatabase
+    [Migration("20250428160247_InitDatabase")]
+    partial class InitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace SCIC_BE.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SCIC_BE.Models.LecturerInfoModel", b =>
+            modelBuilder.Entity("SCIC_BE.Models.LecturerModel", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -39,14 +39,16 @@ namespace SCIC_BE.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("LecturerInfos");
+                    b.ToTable("Lecturer");
                 });
 
             modelBuilder.Entity("SCIC_BE.Models.RoleModel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -57,7 +59,7 @@ namespace SCIC_BE.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("SCIC_BE.Models.StudentInfoModel", b =>
+            modelBuilder.Entity("SCIC_BE.Models.StudentModel", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -71,7 +73,7 @@ namespace SCIC_BE.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("StudentInfos");
+                    b.ToTable("Student");
                 });
 
             modelBuilder.Entity("SCIC_BE.Models.UserModel", b =>
@@ -102,8 +104,8 @@ namespace SCIC_BE.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -112,22 +114,22 @@ namespace SCIC_BE.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("SCIC_BE.Models.LecturerInfoModel", b =>
+            modelBuilder.Entity("SCIC_BE.Models.LecturerModel", b =>
                 {
                     b.HasOne("SCIC_BE.Models.UserModel", "User")
                         .WithOne("LecturerInfo")
-                        .HasForeignKey("SCIC_BE.Models.LecturerInfoModel", "UserId")
+                        .HasForeignKey("SCIC_BE.Models.LecturerModel", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SCIC_BE.Models.StudentInfoModel", b =>
+            modelBuilder.Entity("SCIC_BE.Models.StudentModel", b =>
                 {
                     b.HasOne("SCIC_BE.Models.UserModel", "User")
                         .WithOne("StudentInfo")
-                        .HasForeignKey("SCIC_BE.Models.StudentInfoModel", "UserId")
+                        .HasForeignKey("SCIC_BE.Models.StudentModel", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

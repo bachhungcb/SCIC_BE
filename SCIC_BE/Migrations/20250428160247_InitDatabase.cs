@@ -6,19 +6,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SCIC_BE.Migrations
 {
     /// <inheritdoc />
-    public partial class initDatabase : Migration
+    public partial class InitDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Students");
-
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -41,7 +39,7 @@ namespace SCIC_BE.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LecturerInfos",
+                name: "Lecturer",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -50,9 +48,9 @@ namespace SCIC_BE.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LecturerInfos", x => x.UserId);
+                    table.PrimaryKey("PK_Lecturer", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_LecturerInfos_Users_UserId",
+                        name: "FK_Lecturer_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -60,7 +58,7 @@ namespace SCIC_BE.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StudentInfos",
+                name: "Student",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -69,9 +67,9 @@ namespace SCIC_BE.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StudentInfos", x => x.UserId);
+                    table.PrimaryKey("PK_Student", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_StudentInfos_Users_UserId",
+                        name: "FK_Student_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -83,7 +81,7 @@ namespace SCIC_BE.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,10 +110,10 @@ namespace SCIC_BE.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LecturerInfos");
+                name: "Lecturer");
 
             migrationBuilder.DropTable(
-                name: "StudentInfos");
+                name: "Student");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
@@ -125,19 +123,6 @@ namespace SCIC_BE.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StudentCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Students", x => x.Id);
-                });
         }
     }
 }

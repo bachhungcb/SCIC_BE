@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SCIC_BE.DTO.StudentDTO;
 using SCIC_BE.Interfaces.IServices;
@@ -19,7 +20,7 @@ namespace SCIC_BE.Controllers.StudentControllers
             _studentService = studentService;
             _userInfoService = userInfoService;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListStudentAsync()
         {
