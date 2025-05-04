@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using SCIC_BE.DTO.StudentDTO;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Services;
+using SCIC_BE.Models;
+using SCIC_BE.Helper;
 
 
 namespace SCIC_BE.Controllers.StudentControllers
 {
-    [Route("/api/v1/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Student")]
     public class StudentController : ControllerBase
     {
         private readonly StudentService _studentService;
@@ -20,38 +23,88 @@ namespace SCIC_BE.Controllers.StudentControllers
             _studentService = studentService;
             _userInfoService = userInfoService;
         }
-        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public async Task<IActionResult> GetListStudentAsync()
         {
-            var studentList = await _studentService.GetListStudentAsync();
-            if (studentList == null || studentList.Count == 0)
+            var students = await _studentService.GetListStudentAsync();
+
+            if (students == null || !students.Any())
             {
-                return NotFound("No students found");
+                return NotFound(ApiErrorHelper.Build(404, "No students found", HttpContext));
             }
 
-            return Ok(studentList);
+            return Ok(students);
         }
 
-        // Tạo thông tin sinh viên
+        [HttpGet("student/{id}")]
+        public async Task<IActionResult> GetStudentById(Guid id)
+        {
+            var student = await _studentService.GetStudentByIdAsync(id);
+
+            if (student == null)
+            {
+                return NotFound(ApiErrorHelper.Build(404, $"Student with ID {id} not found", HttpContext));
+            }
+
+            return Ok(student);
+        }
+
         [HttpPost("create-student")]
         public async Task<IActionResult> CreateStudent([FromBody] CreateStudentDTO dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ApiErrorHelper.Build(400, "Bad Request", HttpContext));
+            }
 
-            await _studentService.CreateStudentAsync(dto);
-
-            return Ok();
+            try
+            {
+                await _studentService.CreateStudentAsync(dto);
+                return Ok(new { message = "Student created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
-        // Cập nhật thông tin sinh viên
         [HttpPut("update-student")]
         public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudentDTO dto)
         {
-            await _studentService.UpdateStudentInfoAsync(dto.UserId, dto.NewStudentCode);
-            return Ok();
+            try
+            {
+                await _studentService.UpdateStudentInfoAsync(dto.UserId, dto.NewStudentCode);
+                return Ok(new { message = "Student updated successfully" });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(ApiErrorHelper.Build(404, $"Student with ID {dto.UserId} not found", HttpContext));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
-
+        [HttpDelete("delete-student/{id}")]
+        public async Task<IActionResult> DeleteStudent(Guid id)
+        {
+            try
+            {
+                await _studentService.DeleteStudentAsync(id);
+                return Ok(new { message = "Student deleted successfully" });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(ApiErrorHelper.Build(404, $"Student with ID {id} not found", HttpContext));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
 
     }
+
 }

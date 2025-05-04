@@ -19,14 +19,14 @@ namespace SCIC_BE.Services
         {
             var claims = new List<Claim>
             {
-                new Claim("Id", user.Id.ToString()),
-                new Claim("Name", user.Name),
-                new Claim("Email", user.Email),
+                new Claim("id", user.Id.ToString()),
+                new Claim("name", user.Name),
+                new Claim("email", user.Email),
             };
 
             foreach (var role in roles)
             {
-                claims.Add(new Claim("Role", role));
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

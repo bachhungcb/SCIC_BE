@@ -37,7 +37,7 @@ namespace SCIC_BE.Controllers.AuthControllers
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
         }
-
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(CreateUserDTO dto)
         {

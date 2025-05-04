@@ -14,6 +14,9 @@ using SCIC_BE.Repositories.RoleRepository;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using SCIC_BE.Middlewares.Exceptions;
+using System.Text.Json;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +31,49 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(
+               Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+
+            
+            RoleClaimType = ClaimTypes.Role, 
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+
+                var result = JsonSerializer.Serialize(new ApiError
+                {
+                    Status = 401,
+                    Message = "Unauthorized",
+                    ErrorCode = "unauthorized",
+                    TraceId = context.HttpContext.TraceIdentifier,
+                    Timestamp = DateTime.UtcNow.ToString("o"),
+                });
+
+                return context.Response.WriteAsync(result);
+            },
+            OnForbidden = context =>
+            {
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "application/json";
+
+                var result = JsonSerializer.Serialize(new ApiError
+                {
+                    Status = 403,
+                    Message = "Forbidden",
+                    ErrorCode = "forbidden",
+                    TraceId = context.HttpContext.TraceIdentifier,
+                    Timestamp = DateTime.UtcNow.ToString("o"),
+                });
+
+                return context.Response.WriteAsync(result);
+            }
         };
     });
 
@@ -120,12 +165,13 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
+
+
+app.MapControllers();
+
 
 app.Lifetime.ApplicationStarted.Register(() =>
 {
