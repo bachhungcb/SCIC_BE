@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SCIC_BE.DTO.AuthDTO;
-using SCIC_BE.DTO.RoleDTO;
-using SCIC_BE.DTO.UserDTO;
+using SCIC_BE.DTO.AuthDTOs;
+using SCIC_BE.DTO.RoleDTOs;
+using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.RoleRepository;
 using SCIC_BE.Repositories.UserRepository;

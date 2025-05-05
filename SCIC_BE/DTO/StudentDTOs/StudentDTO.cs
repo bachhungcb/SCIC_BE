@@ -1,11 +1,12 @@
-﻿namespace SCIC_BE.DTO.LecturerDTO
+﻿namespace SCIC_BE.DTO.StudentDTOs
 {
-    public class LecturerDTO
+    public class StudentDTO
     {
         public Guid UserId { get; set; }
         public string UserName { get; set; } //From User
         public string Email { get; set; } //From User
-        public string LecturerCode { get; set; }
-        public DateTime HireDate { get; set; }
+        public string StudentCode { get; set; }
+        public DateTime EnrollDate { get; set; }
+
     }
 }

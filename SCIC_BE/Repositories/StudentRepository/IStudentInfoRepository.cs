@@ -1,4 +1,4 @@
-﻿using SCIC_BE.DTO.StudentDTO;
+﻿using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.Models;
 
 namespace SCIC_BE.Repository.StudentRepository

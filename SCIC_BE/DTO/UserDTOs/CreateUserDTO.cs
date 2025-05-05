@@ -1,4 +1,4 @@
-﻿namespace SCIC_BE.DTO.UserDTO
+﻿namespace SCIC_BE.DTO.UserDTOs
 {
     public class CreateUserDTO
     {

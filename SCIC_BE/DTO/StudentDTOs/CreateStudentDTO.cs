@@ -1,4 +1,4 @@
-﻿namespace SCIC_BE.DTO.StudentDTO
+﻿namespace SCIC_BE.DTO.StudentDTOs
 {
     public class CreateStudentDTO
     {

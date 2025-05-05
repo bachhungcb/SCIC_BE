@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SCIC_BE.DTO.StudentDTO;
+using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.RoleRepository;
@@ -44,10 +44,10 @@ namespace SCIC_BE.Services
             return studentDTO;
         }
 
-        public async Task CreateStudentAsync(CreateStudentDTO dto)
+        public async Task CreateStudentAsync(Guid id, CreateStudentDTO dto)
         {
-            
-            var user = await _userRepository.GetUserByIdAsync(dto.UserId);
+
+            var user = await _userRepository.GetUserByIdAsync(id);
 
             if (user == null)
             {
@@ -57,8 +57,7 @@ namespace SCIC_BE.Services
 
             var studentRole = await _roleRepository.GetRoleByNameAsync("Student");
             if (studentRole == null)
-            {
-                
+            { 
                 throw new Exception("Role 'Student' not found");
             }
 
@@ -68,16 +67,15 @@ namespace SCIC_BE.Services
                 var userRole = new UserRoleModel
                 {
                     UserId = user.Id,
-                    RoleId = studentRole.Id
+                    RoleId = studentRole.Id,
                 };
                 await _userRoleRepository.AddAsync(userRole);
             }
 
-            
             var existingStudentInfo = await _studentInfoRepository.GetByStudentIdAsync(dto.UserId);
 
             if (existingStudentInfo == null)
-            {     
+            {
                 await CreateStudentInfoAsync(dto.UserId, dto.StudentCode, dto.EnrollDate);
             }
         }
@@ -121,7 +119,7 @@ namespace SCIC_BE.Services
                 throw new Exception("Student info not found");
 
             studentInfo.StudentCode = newStudentCode;
-           
+
             await _studentInfoRepository.UpdateAsync(studentInfo);
         }
 

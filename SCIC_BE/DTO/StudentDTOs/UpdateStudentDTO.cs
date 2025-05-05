@@ -1,8 +1,7 @@
-﻿namespace SCIC_BE.DTO.StudentDTO
+﻿namespace SCIC_BE.DTO.StudentDTOs
 {
     public class UpdateStudentDTO
     {
-        public Guid UserId { get; set; }
         public required string NewStudentCode { get; set; }
     }
 }

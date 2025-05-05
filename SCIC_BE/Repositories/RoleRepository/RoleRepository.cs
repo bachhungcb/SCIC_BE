@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using SCIC_BE.Data;
-using SCIC_BE.DTO.RoleDTO;
+using SCIC_BE.DTO.RoleDTOs;
 
 namespace SCIC_BE.Repositories.RoleRepository
 {
@@ -32,7 +32,7 @@ namespace SCIC_BE.Repositories.RoleRepository
 
         public async Task<RoleDTO> GetRoleByNameAsync(string name)
         {
-            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == name);
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name.ToLower() == name.ToLower());
 
             if (role == null)
             {

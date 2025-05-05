@@ -1,4 +1,4 @@
-﻿using SCIC_BE.DTO.RoleDTO;
+﻿using SCIC_BE.DTO.RoleDTOs;
 
 
 namespace SCIC_BE.Repositories.RoleRepository

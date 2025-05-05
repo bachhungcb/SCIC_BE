@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SCIC_BE.DTO.AuthDTO
+namespace SCIC_BE.DTO.AuthDTOs
 {
     public class LoginDTO
     {

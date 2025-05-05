@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
 using SCIC_BE.Models;
+using System.Runtime.InteropServices;
 
 namespace SCIC_BE.Repositories.UserRepository
 {
@@ -24,7 +25,7 @@ namespace SCIC_BE.Repositories.UserRepository
 
             if (user == null)
             {
-                return null;
+                throw new KeyNotFoundException("User not found");
             }
 
             return user;
@@ -42,13 +43,14 @@ namespace SCIC_BE.Repositories.UserRepository
             var users = await _context.Users
                         .Include(u => u.StudentInfo)
                         .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
                         .Include(u => u.LecturerInfo)
                         .ToListAsync();
 
 
             if (users == null)
             {
-                return null;
+                throw new KeyNotFoundException("User not found");
             }
 
             return users;
@@ -70,5 +72,32 @@ namespace SCIC_BE.Repositories.UserRepository
 
             return user;
         }
+
+        public async Task UpdateUserAsync(UserModel user)
+        {
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+
+            if (existingUser == null)
+            {
+                throw new KeyNotFoundException("User not found to update");
+            }
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteUserAsync(Guid id)
+        {
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (existingUser == null)
+            {
+                throw new KeyNotFoundException("User not found to update");
+            }
+
+            _context.Users.Remove(existingUser);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

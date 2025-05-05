@@ -1,4 +1,4 @@
-﻿namespace SCIC_BE.DTO.RoleDTO
+﻿namespace SCIC_BE.DTO.RoleDTOs
 {
     public class RoleDTO
     {

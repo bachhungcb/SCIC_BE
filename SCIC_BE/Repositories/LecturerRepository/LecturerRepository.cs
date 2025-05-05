@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
-using SCIC_BE.DTO.LecturerDTO;
-using SCIC_BE.DTO.StudentDTO;
+using SCIC_BE.DTO.LecturerDTOs;
+using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.Models;
 
 namespace SCIC_BE.Repositories.LecturerRepository

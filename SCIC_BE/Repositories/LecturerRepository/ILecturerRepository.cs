@@ -1,4 +1,4 @@
-﻿using SCIC_BE.DTO.LecturerDTO;
+﻿using SCIC_BE.DTO.LecturerDTOs;
 using SCIC_BE.Models;
 
 namespace SCIC_BE.Repositories.LecturerRepository

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SCIC_BE.DTO.StudentDTO;
+using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Services;
 using SCIC_BE.Models;
@@ -50,8 +50,8 @@ namespace SCIC_BE.Controllers.StudentControllers
             return Ok(student);
         }
 
-        [HttpPost("create-student")]
-        public async Task<IActionResult> CreateStudent([FromBody] CreateStudentDTO dto)
+        [HttpPost("create-student/{id}")]
+        public async Task<IActionResult> CreateStudent(Guid id, [FromBody] CreateStudentDTO dto)
         {
             if (!ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace SCIC_BE.Controllers.StudentControllers
 
             try
             {
-                await _studentService.CreateStudentAsync(dto);
+                await _studentService.CreateStudentAsync(id, dto);
                 return Ok(new { message = "Student created successfully" });
             }
             catch (Exception ex)
@@ -75,17 +75,17 @@ namespace SCIC_BE.Controllers.StudentControllers
         }
 
 
-        [HttpPut("update-student")]
-        public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudentDTO dto)
+        [HttpPut("update-student/{id}")]
+        public async Task<IActionResult> UpdateStudent(Guid id, [FromBody] UpdateStudentDTO dto)
         {
             try
             {
-                await _studentService.UpdateStudentInfoAsync(dto.UserId, dto.NewStudentCode);
+                await _studentService.UpdateStudentInfoAsync(id, dto.NewStudentCode);
                 return Ok(new { message = "Student updated successfully" });
             }
             catch (KeyNotFoundException)
             {
-                return NotFound(ApiErrorHelper.Build(404, $"Student with ID {dto.UserId} not found", HttpContext));
+                return NotFound(ApiErrorHelper.Build(404, $"Student with ID {id} not found", HttpContext));
             }
             catch (Exception ex)
             {
