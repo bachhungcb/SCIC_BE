@@ -15,42 +15,24 @@ namespace SCIC_BE.Repositories.LecturerRepository
             _context = context;
         }
 
-        public async Task<List<LecturerDTO>> GetAllLecturerAsync()
+        public async Task<List<LecturerModel>> GetAllLecturerAsync()
         {
-            var lecturers = await _context.Set<LecturerModel>()
+            var lecturers = await   _context.Set<LecturerModel>()
                                             .Include(s => s.User)
                                             .ToListAsync();
-            var lectureDTOs = lecturers.Select(s => new LecturerDTO
-            {
-                UserId = s.UserId,
-                UserName = s.User?.Name,
-                Email = s.User?.Email,
-                LecturerCode = s.LecturerCode,
-                HireDate = s.HireDate,
-            }).ToList();
 
-            return lectureDTOs;
+            return lecturers;
         }
 
-        public async Task<LecturerDTO> GetLecturerByIdAsync(Guid id)
+        public async Task<LecturerModel> GetLecturerByIdAsync(Guid id)
         {
             var lecturer = await _context.Lecturer
-                            .FirstOrDefaultAsync(s => s.User.Id == id);
-            if (lecturer == null)
-            {
-                return null;
-            }
+                                         .Include(s => s.User)  // Bao gồm thông tin User
+                                         .ThenInclude(u => u.UserRoles)  // Bao gồm các UserRoles
+                                         .ThenInclude(ur => ur.Role)  // Bao gồm Role của User
+                                         .FirstOrDefaultAsync(s => s.UserId == id);
 
-            var lecturerDTO = new LecturerDTO
-            {
-                UserId = lecturer.UserId,
-                UserName = lecturer.User?.Name,
-                Email = lecturer.User?.Email,
-                LecturerCode = lecturer.LecturerCode,
-                HireDate = lecturer.HireDate,
-            };
-
-            return lecturerDTO;
+            return lecturer;
         }
         public async Task AddAsync(LecturerModel lecturerInfo)
         {
@@ -59,11 +41,27 @@ namespace SCIC_BE.Repositories.LecturerRepository
         }
         public async Task UpdateAsync(LecturerModel lecturerInfo)
         {
+            var existingLecturer =  await _context.Lecturer.FirstOrDefaultAsync(s => s.UserId ==  lecturerInfo.UserId);
+
+            if (existingLecturer == null)
+            {
+                throw new KeyNotFoundException("Lecturer not found to update");
+            }
+
+
             _context.Lecturer.Update(lecturerInfo);
             await _context.SaveChangesAsync();
         }
         public async Task DeleteAsync(LecturerModel lecturerInfo)
         {
+            var existingLecturer = await _context.Lecturer.FirstOrDefaultAsync(s => s.UserId == lecturerInfo.UserId);
+
+            if (existingLecturer == null)
+            {
+                throw new KeyNotFoundException("Lecturer not found to update");
+            }
+
+
             _context.Lecturer.Remove(lecturerInfo);
             await _context.SaveChangesAsync();
         }

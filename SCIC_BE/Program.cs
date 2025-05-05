@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using SCIC_BE.Middlewares.Exceptions;
 using System.Text.Json;
 using System.Security.Claims;
+using SCIC_BE.Repositories.LecturerRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -136,6 +137,8 @@ builder.Services.AddControllers(options =>
 //Dependency Injection declare
 builder.Services.AddScoped<IStudentInfoRepository, StudentInfoRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<ILecturerService, LecturerService>();
+builder.Services.AddScoped<ILecturerRepository, LecturerRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IPasswordHasher<UserModel>, PasswordHasher<UserModel>>();

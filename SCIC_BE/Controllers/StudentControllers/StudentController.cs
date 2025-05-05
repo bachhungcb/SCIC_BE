@@ -16,16 +16,14 @@ namespace SCIC_BE.Controllers.StudentControllers
     public class StudentController : ControllerBase
     {
         private readonly StudentService _studentService;
-        private readonly UserInfoService _userInfoService;
 
-        public StudentController(StudentService studentService, UserInfoService userInfoService)
+        public StudentController(StudentService studentService)
         {
             _studentService = studentService;
-            _userInfoService = userInfoService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetListStudentAsync()
+        public async Task<IActionResult> GetListStudent()
         {
             var students = await _studentService.GetListStudentAsync();
 

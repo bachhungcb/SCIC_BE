@@ -5,8 +5,8 @@ namespace SCIC_BE.Repositories.LecturerRepository
 {
     public interface ILecturerRepository
     {
-        Task<List<LecturerDTO>> GetAllLecturerAsync();
-        Task<LecturerDTO> GetLecturerByIdAsync(Guid id);
+        Task<List<LecturerModel>> GetAllLecturerAsync();
+        Task<LecturerModel> GetLecturerByIdAsync(Guid id);
         Task AddAsync(LecturerModel lecturerInfo);
         Task UpdateAsync(LecturerModel lecturerInfo);
         Task DeleteAsync(LecturerModel lecturerInfo);

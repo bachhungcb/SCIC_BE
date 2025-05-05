@@ -13,19 +13,16 @@ namespace SCIC_BE.Services
     {
         private readonly IStudentInfoRepository _studentInfoRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IPasswordService _passwordService;
         private readonly IRoleRepository _roleRepository;
         private readonly IUserRoleRepository _userRoleRepository;
 
-        public StudentService(IStudentInfoRepository studentRepository,
+        public StudentService(  IStudentInfoRepository studentRepository,
                                 IUserRepository userRepository,
-                                IPasswordService passwordService,
                                 IRoleRepository roleRepository,
                                 IUserRoleRepository userRoleRepository)
         {
             _studentInfoRepository = studentRepository;
             _userRepository = userRepository;
-            _passwordService = passwordService;
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
         }
