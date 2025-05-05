@@ -17,7 +17,7 @@ namespace SCIC_BE.Services
         private readonly IRoleRepository _roleRepository;
         private readonly IUserRoleRepository _userRoleRepository;
 
-        public StudentService(  IStudentInfoRepository studentRepository,
+        public StudentService(IStudentInfoRepository studentRepository,
                                 IUserRepository userRepository,
                                 IPasswordService passwordService,
                                 IRoleRepository roleRepository,
@@ -30,38 +30,38 @@ namespace SCIC_BE.Services
             _userRoleRepository = userRoleRepository;
         }
 
-        public async Task<StudentModel> GetStudentByIdAsync(Guid studentId)
+        public async Task<StudentDTO> GetStudentByIdAsync(Guid studentId)
         {
             var student = await _studentInfoRepository.GetByStudentIdAsync(studentId);
-            return student;
+            var studentDTO = new StudentDTO
+            {
+                UserId = student.User.Id,
+                UserName = student.User.Name,
+                Email = student.User.Email,
+                StudentCode = student.StudentCode,
+                EnrollDate = student.EnrollDate,
+            };
+            return studentDTO;
         }
+
         public async Task CreateStudentAsync(CreateStudentDTO dto)
         {
-            // Kiểm tra xem User đã tồn tại hay chưa
+            
             var user = await _userRepository.GetUserByIdAsync(dto.UserId);
 
             if (user == null)
             {
-                // Nếu User không tồn tại, tạo mới một User
-                user = new UserModel
-                {
-                    Id = dto.UserId,
-                    Name = dto.Name,
-                    Email = dto.Email,
-                    PasswordHash = _passwordService.HashPassword(null, dto.Password)
-                    // Thêm các thuộc tính khác của User nếu cần
-                };
-                await _userRepository.AddUserAsync(user);  // Giả sử có method này trong repository
+
+                throw new Exception("User not found");
             }
 
-            // Tìm role "Student"
             var studentRole = await _roleRepository.GetRoleByNameAsync("Student");
             if (studentRole == null)
             {
-                return;
+                
+                throw new Exception("Role 'Student' not found");
             }
 
-            // Kiểm tra nếu User chưa có role đó
             var hasRole = user.UserRoles?.Any(ur => ur.RoleId == studentRole.Id) == true;
             if (!hasRole)
             {
@@ -73,39 +73,41 @@ namespace SCIC_BE.Services
                 await _userRoleRepository.AddAsync(userRole);
             }
 
-
+            
             var existingStudentInfo = await _studentInfoRepository.GetByStudentIdAsync(dto.UserId);
 
             if (existingStudentInfo == null)
-            {
-                // Lưu thông tin sinh viên vào cơ sở dữ liệu
+            {     
                 await CreateStudentInfoAsync(dto.UserId, dto.StudentCode, dto.EnrollDate);
             }
-            else
-            {
-                existingStudentInfo.StudentCode = dto.StudentCode;
-                existingStudentInfo.EnrollDate = dto.EnrollDate;
-                await _studentInfoRepository.UpdateAsync(existingStudentInfo);
-            }
-
         }
+
 
         public async Task<List<StudentDTO>> GetListStudentAsync()
         {
-            var students = await _studentInfoRepository.GetAllStudentsAsync();
+            var students = await _studentInfoRepository.GetAllStudentsAsync(); //StudentModel
 
-            // Nếu cần validate / xử lý thêm gì đó → xử lý ở đây
-
-            return students;
+            var studentDTOs = students.Select(student => new StudentDTO
+            {
+                UserId = student.UserId,
+                UserName = student.User.Name,
+                Email = student.User.Email,
+                StudentCode = student.StudentCode,
+                EnrollDate = student.EnrollDate,
+            }).ToList();
+            return studentDTOs;
         }
 
         public async Task CreateStudentInfoAsync(Guid userId, string studentCode, DateTime enrollDate)
         {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+
             var studentInfo = new StudentModel
             {
                 UserId = userId,
                 StudentCode = studentCode,
-                EnrollDate = enrollDate
+                EnrollDate = enrollDate,
+                User = user
             };
 
             await _studentInfoRepository.AddAsync(studentInfo);
@@ -113,21 +115,24 @@ namespace SCIC_BE.Services
 
         public async Task UpdateStudentInfoAsync(Guid userId, string newStudentCode)
         {
-            var studentInfo = await GetStudentByIdAsync(userId);
+            var studentInfo = await _studentInfoRepository.GetByStudentIdAsync(userId);
 
             if (studentInfo == null)
                 throw new Exception("Student info not found");
 
             studentInfo.StudentCode = newStudentCode;
+           
             await _studentInfoRepository.UpdateAsync(studentInfo);
         }
 
         public async Task DeleteStudentAsync(Guid userId)
         {
-            var studentInfo = await GetStudentByIdAsync(userId);
+            var studentInfo = await _studentInfoRepository.GetByStudentIdAsync(userId);
 
             if (studentInfo == null)
                 throw new Exception("Student info not found");
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            user.UserRoles.Clear();
             await _studentInfoRepository.DeleteAsync(studentInfo);
         }
 

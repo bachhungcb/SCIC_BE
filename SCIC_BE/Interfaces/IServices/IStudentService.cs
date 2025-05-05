@@ -10,7 +10,7 @@ namespace SCIC_BE.Interfaces.IServices
         Task CreateStudentAsync(CreateStudentDTO dto);
         Task CreateStudentInfoAsync(Guid userId, string studentCode, DateTime enrollDate);
         Task DeleteStudentAsync(Guid userId);
-        Task<StudentModel> GetStudentByIdAsync(Guid studentId);
+        Task<StudentDTO> GetStudentByIdAsync(Guid studentId);
     }
 
 }

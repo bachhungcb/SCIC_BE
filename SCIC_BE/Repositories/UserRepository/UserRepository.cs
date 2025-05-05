@@ -18,6 +18,7 @@ namespace SCIC_BE.Repositories.UserRepository
             var user = await _context.Users
                         .Include(u => u.StudentInfo)
                         .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
                         .Include(u => u.LecturerInfo)
                         .FirstOrDefaultAsync(u => u.Id == id);
 

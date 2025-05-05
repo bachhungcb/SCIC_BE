@@ -65,9 +65,15 @@ namespace SCIC_BE.Controllers.StudentControllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500);
+
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred",
+                    details = ex.Message 
+                });
             }
         }
+
 
         [HttpPut("update-student")]
         public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudentDTO dto)
@@ -83,7 +89,11 @@ namespace SCIC_BE.Controllers.StudentControllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred",
+                    details = ex.Message
+                });
             }
         }
 
@@ -101,7 +111,11 @@ namespace SCIC_BE.Controllers.StudentControllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred",
+                    details = ex.Message
+                });
             }
         }
 
