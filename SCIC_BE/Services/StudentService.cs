@@ -69,11 +69,11 @@ namespace SCIC_BE.Services
                 await _userRoleRepository.AddAsync(userRole);
             }
 
-            var existingStudentInfo = await _studentInfoRepository.GetByStudentIdAsync(dto.UserId);
+            var existingStudentInfo = await _studentInfoRepository.GetByStudentIdAsync(id);
 
             if (existingStudentInfo == null)
             {
-                await CreateStudentInfoAsync(dto.UserId, dto.StudentCode, dto.EnrollDate);
+                await CreateStudentInfoAsync(id, dto.StudentCode, dto.EnrollDate);
             }
         }
 
@@ -127,7 +127,14 @@ namespace SCIC_BE.Services
             if (studentInfo == null)
                 throw new Exception("Student info not found");
             var user = await _userRepository.GetUserByIdAsync(userId);
-            user.UserRoles.Clear();
+
+            var userRoles = user.UserRoles.ToList();
+            foreach(var userRole in userRoles)
+            {
+               await _userRoleRepository.RemoveAsync(userRole);
+            }
+
+            
             await _studentInfoRepository.DeleteAsync(studentInfo);
         }
 

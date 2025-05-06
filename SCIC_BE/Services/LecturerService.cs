@@ -117,7 +117,12 @@ namespace SCIC_BE.Services
                 throw new Exception("Lecturer info not found");
 
             var user = await _userRepository.GetUserByIdAsync(userId);
-            user.UserRoles.Clear();
+
+            var userRoles = user.UserRoles.ToList();
+            foreach (var userRole in userRoles)
+            {
+                await _userRoleRepository.RemoveAsync(userRole);
+            }
             await _userRepository.DeleteUserAsync(userId);
         }
 
