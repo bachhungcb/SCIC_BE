@@ -51,7 +51,8 @@ namespace SCIC_BE.Controllers.AuthControllers
             var user = new UserModel
             {
                 Id = Guid.NewGuid(),
-                Name = dto.Name,
+                UserName = dto.UserName,
+                FullName = dto.FullName,
                 Email = dto.Email,
                 PasswordHash = _passwordHasher.HashPassword(null, dto.Password)
             };

@@ -20,7 +20,7 @@ namespace SCIC_BE.Services
             var claims = new List<Claim>
             {
                 new Claim("id", user.Id.ToString()),
-                new Claim("name", user.Name),
+                new Claim("name", user.UserName),
                 new Claim("email", user.Email),
             };
 

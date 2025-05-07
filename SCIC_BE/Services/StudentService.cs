@@ -33,7 +33,7 @@ namespace SCIC_BE.Services
             var studentDTO = new StudentDTO
             {
                 UserId = student.User.Id,
-                UserName = student.User.Name,
+                UserName = student.User.UserName,
                 Email = student.User.Email,
                 StudentCode = student.StudentCode,
                 EnrollDate = student.EnrollDate,
@@ -85,7 +85,7 @@ namespace SCIC_BE.Services
             var studentDTOs = students.Select(student => new StudentDTO
             {
                 UserId = student.UserId,
-                UserName = student.User.Name,
+                UserName = student.User.UserName,
                 Email = student.User.Email,
                 StudentCode = student.StudentCode,
                 EnrollDate = student.EnrollDate,

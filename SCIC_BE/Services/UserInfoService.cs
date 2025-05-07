@@ -29,7 +29,8 @@ namespace SCIC_BE.Services
             return new UserDTO
             {
                 Id = user.Id,
-                Name = user.Name,
+                UserName = user.UserName,
+                FullName = user.FullName,
                 Email = user.Email,
                 UserRoles = userRoleDTO
             };
@@ -40,7 +41,8 @@ namespace SCIC_BE.Services
             var user = new UserModel
             {
                 Id = Guid.NewGuid(),
-                Name = dto.Name,
+                UserName = dto.UserName,
+                FullName = dto.FullName,
                 Email = dto.Email,
                 PasswordHash = _passwordService.HashPassword(null, dto.Password)
 
@@ -94,7 +96,7 @@ namespace SCIC_BE.Services
                 throw new Exception("User info not found");
             }
 
-            userInfo.Name = dto.Name;
+            userInfo.UserName = dto.Name;
             userInfo.Email = dto.Email;
 
             await _userRepository.UpdateUserAsync(userInfo);

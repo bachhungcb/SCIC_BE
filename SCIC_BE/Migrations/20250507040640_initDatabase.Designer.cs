@@ -12,8 +12,8 @@ using SCIC_BE.Data;
 namespace SCIC_BE.Migrations
 {
     [DbContext(typeof(ScicDbContext))]
-    [Migration("20250428160247_InitDatabase")]
-    partial class InitDatabase
+    [Migration("20250507040640_initDatabase")]
+    partial class initDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,11 +86,15 @@ namespace SCIC_BE.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

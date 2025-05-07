@@ -34,7 +34,7 @@ namespace SCIC_BE.Services
             var lecturerDTOs = lectureres.Select(lecturer => new LecturerDTO
             {
                 UserId = lecturer.UserId,
-                UserName = lecturer.User.Name,
+                UserName = lecturer.User.UserName,
                 Email = lecturer.User.Email,
                 LecturerCode = lecturer.LecturerCode,
                 HireDate = lecturer.HireDate,
@@ -49,7 +49,7 @@ namespace SCIC_BE.Services
             var lecturerDTO = new LecturerDTO
             {
                 UserId = lecturer.UserId,
-                UserName = lecturer.User.Name,
+                UserName = lecturer.User.UserName,
                 Email = lecturer.User.Email,
                 LecturerCode = lecturer.LecturerCode,
                 HireDate = lecturer.HireDate
