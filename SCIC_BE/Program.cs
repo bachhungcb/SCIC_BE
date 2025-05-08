@@ -137,18 +137,21 @@ builder.Services.AddControllers(options =>
 //Dependency Injection declare
 builder.Services.AddScoped<IStudentInfoRepository, StudentInfoRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+
 builder.Services.AddScoped<ILecturerService, LecturerService>();
 builder.Services.AddScoped<ILecturerRepository, LecturerRepository>();
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserInfoService>();
+
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IPasswordHasher<UserModel>, PasswordHasher<UserModel>>();
+
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+
 builder.Services.AddScoped<JwtService>();
-builder.Services.AddScoped<StudentService>();
-builder.Services.AddScoped<UserRepository>();                // Đăng ký UserRepository
 builder.Services.AddScoped<PasswordService>();
-builder.Services.AddScoped<UserInfoService>();
 
 
 var app = builder.Build();

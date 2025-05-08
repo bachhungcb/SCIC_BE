@@ -29,9 +29,12 @@ namespace SCIC_BE.Services
             return new UserDTO
             {
                 Id = user.Id,
+                IdNumber = user.IdNumber,
                 UserName = user.UserName,
                 FullName = user.FullName,
                 Email = user.Email,
+                FaceImage = user.FaceImage,
+                FingerprintImage = user.FingerprintImage,
                 UserRoles = userRoleDTO
             };
         }
@@ -41,9 +44,12 @@ namespace SCIC_BE.Services
             var user = new UserModel
             {
                 Id = Guid.NewGuid(),
+                IdNumber = dto.IdNumber,
                 UserName = dto.UserName,
                 FullName = dto.FullName,
                 Email = dto.Email,
+                FaceImage = dto.FaceImage,
+                FingerprintImage = dto.FingerprintImage,
                 PasswordHash = _passwordService.HashPassword(null, dto.Password)
 
             };

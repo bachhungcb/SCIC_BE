@@ -12,7 +12,7 @@ namespace SCIC_BE.Controllers.StudentControllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Default User, Student")]
     public class StudentController : ControllerBase
     {
         private readonly StudentService _studentService;
@@ -20,19 +20,6 @@ namespace SCIC_BE.Controllers.StudentControllers
         public StudentController(StudentService studentService)
         {
             _studentService = studentService;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetListStudent()
-        {
-            var students = await _studentService.GetListStudentAsync();
-
-            if (students == null || !students.Any())
-            {
-                return NotFound(ApiErrorHelper.Build(404, "No students found", HttpContext));
-            }
-
-            return Ok(students);
         }
 
         [HttpGet("student/{id}")]
@@ -46,75 +33,6 @@ namespace SCIC_BE.Controllers.StudentControllers
             }
 
             return Ok(student);
-        }
-
-        [HttpPost("create-student/{id}")]
-        public async Task<IActionResult> CreateStudent(Guid id, [FromBody] CreateStudentDTO dto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ApiErrorHelper.Build(400, "Bad Request", HttpContext));
-            }
-
-            try
-            {
-                await _studentService.CreateStudentAsync(id, dto);
-                return Ok(new { message = "Student created successfully" });
-            }
-            catch (Exception ex)
-            {
-
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred",
-                    details = ex.Message 
-                });
-            }
-        }
-
-
-        [HttpPut("update-student/{id}")]
-        public async Task<IActionResult> UpdateStudent(Guid id, [FromBody] UpdateStudentDTO dto)
-        {
-            try
-            {
-                await _studentService.UpdateStudentInfoAsync(id, dto.NewStudentCode);
-                return Ok(new { message = "Student updated successfully" });
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(ApiErrorHelper.Build(404, $"Student with ID {id} not found", HttpContext));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred",
-                    details = ex.Message
-                });
-            }
-        }
-
-        [HttpDelete("delete-student/{id}")]
-        public async Task<IActionResult> DeleteStudent(Guid id)
-        {
-            try
-            {
-                await _studentService.DeleteStudentAsync(id);
-                return Ok(new { message = "Student deleted successfully" });
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(ApiErrorHelper.Build(404, $"Student with ID {id} not found", HttpContext));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred",
-                    details = ex.Message
-                });
-            }
         }
 
     }

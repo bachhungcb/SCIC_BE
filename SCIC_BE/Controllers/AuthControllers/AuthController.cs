@@ -51,34 +51,38 @@ namespace SCIC_BE.Controllers.AuthControllers
             var user = new UserModel
             {
                 Id = Guid.NewGuid(),
+                IdNumber = dto.IdNumber,
                 UserName = dto.UserName,
                 FullName = dto.FullName,
                 Email = dto.Email,
-                PasswordHash = _passwordHasher.HashPassword(null, dto.Password)
+                PasswordHash = _passwordHasher.HashPassword(null, dto.Password),
+                FaceImage = dto.FaceImage,
+                FingerprintImage = dto.FingerprintImage,
             };
 
             await _userRepository.AddUserAsync(user);
 
-            var studentRole = await _roleRepository.GetRoleByNameAsync("Student");
+            var defaultRole = await _roleRepository.GetRoleByNameAsync("Default User");
 
-            if (studentRole == null)
+            if (defaultRole == null)
             {
-                studentRole = new RoleDTO
+                defaultRole = new RoleDTO
                 {
-                    Name = "Student"
+                    Id = 4,
+                    Name = "Default User"
                 };
-                await _roleRepository.AddRoleAsync(studentRole);
+                await _roleRepository.AddRoleAsync(defaultRole);
             }
 
             var userRole = new UserRoleModel
             {
                 UserId = user.Id,
-                RoleId = studentRole.Id
+                RoleId = defaultRole.Id
             };
 
             await _userRoleRepository.AddAsync(userRole);
 
-            return Ok("User registered successfully with Student role");
+            return Ok("User registered successfully with Default role");
         }
 
         [AllowAnonymous]

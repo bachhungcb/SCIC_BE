@@ -14,22 +14,14 @@ namespace SCIC_BE.Controllers.UserControllers
     public class UserController : ControllerBase
     {
         private readonly UserInfoService _userInfoService;
-        private readonly ScicDbContext _context;
 
-        public UserController(UserInfoService userInfoService, ScicDbContext context)
+        public UserController(UserInfoService userInfoService)
         {
             _userInfoService = userInfoService;
-            _context = context;
         }
 
 
-        [HttpPost("create-user")]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO dto)
-        {
-            await _userInfoService.CreateUserAsync(dto);
-
-            return Ok();
-        }
+       
 
 
         [HttpGet("{id}")]
@@ -39,66 +31,7 @@ namespace SCIC_BE.Controllers.UserControllers
             return Ok(user);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllUser()
-        {
-            var userList = await _userInfoService.GetListUserAsync();
-            return Ok(userList);
-        }
-
-        [HttpDelete("delete-user/{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            try
-            {
-                await _userInfoService.DeleteUserAsync(id);
-                return Ok(new { message = "User deleted successfully" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred",
-                    details = ex.Message
-                });
-            }
-        }
-
-        [HttpPut("update-user/{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody]UpdateUserDTO dto)
-        {
-            try
-            {
-                await _userInfoService.UpdateUserAsync(id, dto);
-                return Ok(new { message = "User updated successfully" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred",
-                    details = ex.Message
-                });
-            }
-        }
-
-        [HttpGet("test")]
-        public async Task<IActionResult> Test()
-        {
-            var user = await _context.Users
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync();
-
-            var roleName = user?.UserRoles.FirstOrDefault()?.Role?.Name;
-
-            return Ok(new
-            {
-                RoleName = roleName,
-                RoleId = user?.UserRoles.FirstOrDefault()?.RoleId
-            });
-        }
-
+       
 
     }
 }

@@ -19,18 +19,7 @@ namespace SCIC_BE.Controllers.LecturerControllers
             _lecturerService = lecturerService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListLecturer()
-        {
-            var lecturers = await _lecturerService.GetListLecturerAsync();
-
-            if (lecturers == null || !lecturers.Any())
-            {
-                return NotFound(ApiErrorHelper.Build(404, "No Lecturers found", HttpContext));
-            }
-
-            return Ok(lecturers);
-        }
+       
 
         [HttpGet("lecturer/{id}")]
         public async Task<IActionResult> GetLecturerById(Guid id)
@@ -45,73 +34,7 @@ namespace SCIC_BE.Controllers.LecturerControllers
             return Ok(lecturer);
         }
 
-        [HttpPost("create-lecturer/{id}")]
-        public async Task<IActionResult> CreateLecturer(Guid id, [FromBody] CreateLecturerDTO dto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ApiErrorHelper.Build(400, "Bad Request", HttpContext));
-            }
-
-            try
-            {
-                await _lecturerService.CreateLecturerAsync(id, dto);
-                return Ok(new { message = "Lecturer created successfully" });
-            }
-            catch (Exception ex)
-            {
-
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred",
-                    details = ex.Message
-                });
-            }
-        }
-
-        [HttpPut("update-lecturer/{id}")]
-        public async Task<IActionResult> UpdateLecturer(Guid id, [FromBody] UpdateLecturerDTO dto)
-        {
-            try
-            {
-                await _lecturerService.UpdateLecturerInfoAsync(id, dto.NewLecturereCode);
-                return Ok(new { message = "Lecturer updated successfully" });
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(ApiErrorHelper.Build(404, $"Lecturer with ID {id} not found", HttpContext));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred",
-                    details = ex.Message
-                });
-            }
-        }
-
-        [HttpDelete("delete-lecturer/{id}")]
-        public async Task<IActionResult> DeleteLecturer(Guid id)
-        {
-            try
-            {
-                await _lecturerService.DeleteLecturerAsync(id);
-                return Ok(new { message = "Lecturer deleted successfully" });
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(ApiErrorHelper.Build(404, $"Lecturer with ID {id} not found", HttpContext));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred",
-                    details = ex.Message
-                });
-            }
-        }
+        
 
 
     }

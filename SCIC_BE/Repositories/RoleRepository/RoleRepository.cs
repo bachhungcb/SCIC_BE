@@ -2,6 +2,7 @@
 using Microsoft.Identity.Client;
 using SCIC_BE.Data;
 using SCIC_BE.DTO.RoleDTOs;
+using SCIC_BE.Models;
 
 namespace SCIC_BE.Repositories.RoleRepository
 {
@@ -50,9 +51,17 @@ namespace SCIC_BE.Repositories.RoleRepository
 
         public async Task AddRoleAsync(RoleDTO roleDTO)
         {
-            var role = new RoleDTO { Name = roleDTO.Name };
-            await _context.AddAsync(role);
+            // Chuyển từ RoleDTO sang RoleModel
+            var roleModel = new RoleModel
+            {
+                Id = roleDTO.Id,  // Gán các thuộc tính từ RoleDTO sang RoleModel
+                Name = roleDTO.Name
+            };
+
+            // Thêm RoleModel vào DbContext, không phải RoleDTO
+            await _context.Roles.AddAsync(roleModel);
             await _context.SaveChangesAsync();
         }
+
     }
 }
