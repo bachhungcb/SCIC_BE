@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
 using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.DTO.UserDTOs;
+using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.UserRepository;
 using SCIC_BE.Services;
@@ -13,16 +14,12 @@ namespace SCIC_BE.Controllers.UserControllers
     [Route("api/v1/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserInfoService _userInfoService;
+        private readonly IUserService _userInfoService;
 
-        public UserController(UserInfoService userInfoService)
+        public UserController(IUserService userInfoService)
         {
             _userInfoService = userInfoService;
         }
-
-
-       
-
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(Guid id)

@@ -9,7 +9,7 @@ namespace SCIC_BE.Controllers.LecturerControllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student, Lecturer")]
     public class LecturerController : ControllerBase
     {
         private readonly ILecturerService _lecturerService;

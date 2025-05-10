@@ -11,7 +11,7 @@ namespace SCIC_BE.Interfaces.IServices
         Task<List<HistoryModel>> GetHistoryByDeviceIdAsync(Guid deviceId);
         Task<List<HistoryModel>> GetHistoryByUsersAndDevicesAsync(Guid[] usersIds, Guid[] deviceIds, DateTime startTime, DateTime endTime);
         Task CreateHistoryAsync(CreateHistoryDTO history);
-        Task UpdateHistoryAsync(HistoryModel history);
+        Task UpdateHistoryAsync(Guid id, UpdateHistoryDTO history);
         Task DeleteHistoryAsync(Guid id);
     }
 }

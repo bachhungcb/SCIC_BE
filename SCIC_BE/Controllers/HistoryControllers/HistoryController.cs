@@ -1,6 +1,13 @@
-﻿namespace SCIC_BE.Controllers.HistoryControllers
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace SCIC_BE.Controllers.HistoryControllers
 {
-    public class HistoryController
+    [Route("api/v1/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class HistoryController:ControllerBase
     {
+
     }
 }

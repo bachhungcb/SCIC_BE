@@ -6,7 +6,7 @@ using SCIC_BE.Repositories.HistoryRepository;
 
 namespace SCIC_BE.Services
 {
-    public class HistoryService
+    public class HistoryService : IHistoryService
     {
         private readonly IHistoryRepository _historyRepository;
 
@@ -71,6 +71,28 @@ namespace SCIC_BE.Services
 
             await _historyRepository.AddAsync(historyInfo);
 
+        }
+
+        public async Task UpdateHistoryAsync(Guid id, UpdateHistoryDTO history)
+        {
+            var historyInfo = await GetHistoryByIdAsync(id);
+
+            if (historyInfo == null)
+                throw new Exception("History info not found");
+
+            historyInfo.Status = history.Status;
+            historyInfo.Timestamp = history.Timestamp;
+
+        }
+
+        public async Task DeleteHistoryAsync(Guid id)
+        {
+            var historyInfo = await GetHistoryByIdAsync(id);
+
+            if (historyInfo == null)
+                throw new Exception("History info not found");
+
+            await _historyRepository.DeleteAsync(id);
         }
     }
 }
