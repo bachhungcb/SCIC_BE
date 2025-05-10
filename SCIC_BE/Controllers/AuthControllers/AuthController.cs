@@ -105,7 +105,10 @@ namespace SCIC_BE.Controllers.AuthControllers
 
             var token = _jwtService.GenerateToken(user, roles);
 
-            return Ok(new { Token = token });
+            return Ok(new {
+                user.UserName,
+                user.Email,
+                Token = token });
         }
 
     }

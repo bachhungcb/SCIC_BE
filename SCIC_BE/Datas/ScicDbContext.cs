@@ -15,7 +15,9 @@ namespace SCIC_BE.Data
         public DbSet<UserModel> Users { get; set; }
         public DbSet<LecturerModel> Lecturer { get; set; }
         public DbSet<UserRoleModel> UserRoles { get; set; }
-
+        public DbSet<HistoryModel> Histories { get; set; }
+        public DbSet<DeviceModel> Devices { get; set; }
+        public DbSet<PermissionModel> Permissions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

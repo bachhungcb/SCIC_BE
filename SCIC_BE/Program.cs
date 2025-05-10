@@ -117,6 +117,15 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(securityRequirement);
 });
 
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+{
+    builder.WithOrigins("*")
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+
+    // U Can Filter Here
+}));
+
 builder.Services.AddDbContext<ScicDbContext>(options => options.UseSqlServer(builder.
                                                                                 Configuration.
                                                                                 GetConnectionString("DefaultConnection")));
@@ -172,6 +181,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCors("MyPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
