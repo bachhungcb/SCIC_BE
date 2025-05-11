@@ -18,6 +18,7 @@ using SCIC_BE.Middlewares.Exceptions;
 using System.Text.Json;
 using System.Security.Claims;
 using SCIC_BE.Repositories.LecturerRepository;
+using SCIC_BE.Repositories.PermissionRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -123,7 +124,6 @@ builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
            .AllowAnyMethod()
            .AllowAnyHeader();
 
-    // U Can Filter Here
 }));
 
 builder.Services.AddDbContext<ScicDbContext>(options => options.UseSqlServer(builder.
@@ -144,6 +144,8 @@ builder.Services.AddControllers(options =>
 
 
 //Dependency Injection declare
+builder.Services.AddHttpClient(); // Register IHttpClientFactory
+
 builder.Services.AddScoped<IStudentInfoRepository, StudentInfoRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 
@@ -159,6 +161,10 @@ builder.Services.AddScoped<IPasswordHasher<UserModel>, PasswordHasher<UserModel>
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+
+builder.Services.AddScoped<RcpService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<PasswordService>();
 

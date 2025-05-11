@@ -1,8 +1,10 @@
-﻿namespace SCIC_BE.DTO.RcpDTOs
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace SCIC_BE.DTO.RcpDTOs
 {
     public class RcpParamsDTO
     {
-        public required string UserId { get; set; }
+        public Guid UserId { get; set; }
         public required string UserName { get; set; }
         public required string IdNumber { get; set; } //CCCD 
         public DateTime StartTime { get; set; }

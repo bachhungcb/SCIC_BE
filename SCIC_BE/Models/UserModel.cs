@@ -1,5 +1,8 @@
-﻿namespace SCIC_BE.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace SCIC_BE.Models
 {
+    [Index(nameof(IdNumber), IsUnique =true)]
     public class UserModel
     {
         public Guid Id { get; set; }

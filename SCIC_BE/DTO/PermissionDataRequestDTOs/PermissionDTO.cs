@@ -6,7 +6,6 @@ namespace SCIC_BE.DTO.PermissionDataRequestDTOs
     {
         [Key]
         public Guid Id { get; set; }
-
         public Guid UserId { get; set; }
         public Guid DeviceId { get; set; }
         public DateTime TimeStart { get; set; }
