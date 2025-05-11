@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace SCIC_BE.Controllers.AuthControllers
 {
+   
     [Route("api/v1/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -36,11 +37,29 @@ namespace SCIC_BE.Controllers.AuthControllers
             _jwtService = jwtService;
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
+        
         }
+        private bool IsBase64String(string base64String)
+        {
+            try
+            {
+                Convert.FromBase64String(base64String);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(CreateUserDTO dto)
         {
+            if (!IsBase64String(dto.FaceImage) || !IsBase64String(dto.FingerprintImage))
+            {
+                return BadRequest("Invalid base64 string for image.");
+            }
             var existingUser = await _userRepository.GetUserByEmailAsync(dto.Email);
 
             if (existingUser != null)
