@@ -56,15 +56,21 @@ namespace SCIC_BE.Controllers.AuthControllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(CreateUserDTO dto)
         {
-            if (!IsBase64String(dto.FaceImage) || !IsBase64String(dto.FingerprintImage))
+            if (!IsBase64String(dto.FaceImage))
             {
-                return BadRequest("Invalid base64 string for image.");
+                return BadRequest(new { message = "Invalid base64 string for Face image." });
             }
+
+            if ( !IsBase64String(dto.FingerprintImage))
+            {
+                return BadRequest(new { message = "Invalid base64 string for Fingerprint image." });
+            }
+
             var existingUser = await _userRepository.GetUserByEmailAsync(dto.Email);
 
             if (existingUser != null)
             {
-                return BadRequest("Email Already exists");
+                return BadRequest(new { message = "Email already exists" });
             }
 
             var user = new UserModel
@@ -110,11 +116,11 @@ namespace SCIC_BE.Controllers.AuthControllers
         {
             var user = await _userRepository.GetUserByEmailAsync(dto.Email);
             if (user == null)
-                return Unauthorized("Invalid credentials");
+                return Unauthorized(new { message = "Invalid credentials" });
 
             var result = _passwordHasher.VerifyHashedPassword(null, user.PasswordHash, dto.Password);
             if (result != PasswordVerificationResult.Success)
-                return Unauthorized("Invalid credentials");
+                return Unauthorized(new { message = "Invalid credentials" });
 
             var roles = user.UserRoles?
                             .Where(ur => ur.Role != null)
