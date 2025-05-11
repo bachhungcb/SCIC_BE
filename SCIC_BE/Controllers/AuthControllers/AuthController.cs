@@ -56,15 +56,6 @@ namespace SCIC_BE.Controllers.AuthControllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(CreateUserDTO dto)
         {
-            if (!IsBase64String(dto.FaceImage))
-            {
-                return BadRequest(new { message = "Invalid base64 string for Face image." });
-            }
-
-            if ( !IsBase64String(dto.FingerprintImage))
-            {
-                return BadRequest(new { message = "Invalid base64 string for Fingerprint image." });
-            }
 
             var existingUser = await _userRepository.GetUserByEmailAsync(dto.Email);
 
