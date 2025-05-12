@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace SCIC_BE.Controllers.AuthControllers
 {
-   
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -37,19 +37,7 @@ namespace SCIC_BE.Controllers.AuthControllers
             _jwtService = jwtService;
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
-        
-        }
-        private bool IsBase64String(string base64String)
-        {
-            try
-            {
-                Convert.FromBase64String(base64String);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+
         }
 
         [AllowAnonymous]
@@ -121,13 +109,77 @@ namespace SCIC_BE.Controllers.AuthControllers
 
             var token = _jwtService.GenerateToken(user, roles);
 
-            return Ok(new {
+            return Ok(new
+            {
                 user.Id,
                 user.UserName,
                 user.Email,
                 roles,
-                Token = token });
+                Token = token
+            });
         }
 
+        [HttpPut("change-password/{id}")]
+        public async Task<IActionResult> ChangePassword(Guid id, string newPassword)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserByIdAsync(id);
+
+                if (user == null)
+                    return BadRequest(new { message = "User not found" });
+
+                var newHashedPassword = _passwordHasher.HashPassword(null, newPassword);
+
+                user.PasswordHash = newHashedPassword;
+
+                await _userRepository.UpdateUserAsync(user);
+
+                return Ok(new
+                {
+                    message = "Changed password successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred",
+                    details = ex.Message
+                });
+            }
+        }
+
+        [HttpPut("forgot-password/{email}")]
+        public async Task<IActionResult> ForgotPassword(string email, string newPassword)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserByEmailAsync(email);
+                if (user == null)
+                    return Unauthorized(new { message = "Invalid credentials" });
+
+                var newHashedPassword = _passwordHasher.HashPassword(null, newPassword);
+
+                user.PasswordHash = newHashedPassword;
+
+                await _userRepository.UpdateUserAsync(user);
+
+                return Ok(new
+                {
+                    message = "Changed password successfully"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred",
+                    details = ex.Message
+                });
+            }
+
+        }
     }
 }
