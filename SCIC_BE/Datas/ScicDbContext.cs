@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.Models;
 
 namespace SCIC_BE.Data
@@ -48,6 +49,8 @@ namespace SCIC_BE.Data
                 .HasOne(l => l.User)
                 .WithOne(u => u.LecturerInfo)
                 .HasForeignKey<LecturerModel>(l => l.UserId);
+
+            modelBuilder.Entity<AttendanceStudentDTO>().HasNoKey();
         }
 
     }

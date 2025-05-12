@@ -85,6 +85,10 @@ namespace SCIC_BE.Services
 
             await _attendanceRepository.UpdateAsync(attendance);
         }
+        public async Task DeleteAttendanceAsync(Guid id)
+        {
+
+        }
 
 
     }
