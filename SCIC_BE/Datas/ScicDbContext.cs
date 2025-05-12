@@ -17,6 +17,8 @@ namespace SCIC_BE.Data
         public DbSet<UserRoleModel> UserRoles { get; set; }
         public DbSet<DeviceModel> Devices { get; set; }
         public DbSet<PermissionModel> Permissions { get; set; }
+        public DbSet<AttendanceModel> Attendances { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
