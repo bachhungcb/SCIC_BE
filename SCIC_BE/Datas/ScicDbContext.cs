@@ -50,7 +50,6 @@ namespace SCIC_BE.Data
                 .WithOne(u => u.LecturerInfo)
                 .HasForeignKey<LecturerModel>(l => l.UserId);
 
-            modelBuilder.Entity<AttendanceStudentDTO>().HasNoKey();
         }
 
     }
