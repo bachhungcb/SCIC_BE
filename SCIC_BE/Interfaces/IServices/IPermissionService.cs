@@ -7,8 +7,8 @@ namespace SCIC_BE.Interfaces.IServices
     {
         Task<List<PermissionModel>> GetListPermissionsAsync();
         Task<PermissionModel> GetPermissionByPermissonIdAsync(Guid id);
-        Task<List<PermissionModel>> CreatePermission(PermissionDataRequestDTO request);
-        Task UpdatePermission(Guid PermisionId,  PermissionModel permission);
+        Task<List<PermissionModel>> CreatePermission(PermissionDataRequestDTO request); //<List<PermissionModel>>
+        Task<List<PermissionModel>> UpdatePermission(Guid PermissionId, PermissionDataRequestDTO request);
         Task DeletePermission(Guid PermisionId);
     }
 }

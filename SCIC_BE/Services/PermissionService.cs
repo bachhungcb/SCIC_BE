@@ -38,10 +38,12 @@ namespace SCIC_BE.Services
         public async Task<List<PermissionModel>> CreatePermission(PermissionDataRequestDTO request)
         {
             var createdPermissions = new List<PermissionModel>();
+            var response = "";
 
             foreach (var userId in request.UserIds)
             {
                 var user = await _userRepository.GetUserByIdAsync(userId);
+
                 foreach (var deviceId in request.DeviceIds)
                 {
                     var permission = new PermissionModel
@@ -58,13 +60,86 @@ namespace SCIC_BE.Services
 
                     var rpcParamsDto = new RcpParamsDTO()
                     {
-                        UserName = user.UserName,
-                        UserId = userId,
-                        Endtime = request.TimeEnd,
-                        StartTime = request.TimeStart,
-                        FaceImage = user.FaceImage,
+                        username = user.UserName,
+                        userId = userId,
+                        endTime = request.TimeEnd,
+                        startTime = request.TimeStart,
+                        faceImage = user.FaceImage,
                         FingerPrintImage = user.FingerprintImage,
-                        IdNumber = user.IdNumber, //CCCD
+                        identifyNumber = user.IdNumber, //CCCD
+                    };
+
+                    var rpcRequestDto = new RcpRequestDTO()
+                    {
+                        Token = request.Token,
+                        DeviceId = deviceId,
+                        Method = "userSchedule",
+                        Params = rpcParamsDto
+                    };
+
+                    // Gửi yêu cầu RPC
+                    try
+                    {
+                        // Gửi yêu cầu RPC
+                        await _rcpService.SendRpcRequestAsync(rpcRequestDto);
+
+                        // Cập nhật cơ sở dữ liệu nếu RPC thành công
+                        await _permissionRepository.AddPermissionAsync(permission);
+                        createdPermissions.Add(permission);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log thông tin chi tiết về lỗi
+                        Console.WriteLine($"Error occurred while processing RPC request for userId {userId} and DeviceId {deviceId}: {ex.Message}");
+                        throw new Exception($"Error occurred while processing RPC request for userId {userId} and DeviceId {deviceId}: {response}");
+                    }
+
+                }
+            }
+
+            return createdPermissions;
+        }
+
+
+        public async Task<List<PermissionModel>> UpdatePermission(Guid PermissionId ,PermissionDataRequestDTO request)
+        {
+            var updatedPermissions = new List<PermissionModel>();
+            var response = "";
+
+            // Duyệt qua từng userId
+            foreach (var userId in request.UserIds)
+            {
+                var user = await _userRepository.GetUserByIdAsync(userId);
+
+                // Duyệt qua từng DeviceId
+                foreach (var deviceId in request.DeviceIds)
+                {
+                    // Lấy Permission đã tồn tại
+                    var existingPermission = await _permissionRepository.GetPermissionsByIdAsync(PermissionId);
+
+                    if (existingPermission == null)
+                    {
+                        throw new Exception($"Permission not found for userId: {userId} and DeviceId: {deviceId}");
+                    }
+
+                    // Cập nhật thông tin permission
+                    existingPermission.UserName = user.UserName;
+                    existingPermission.UserId = userId;
+                    existingPermission.DeviceId = deviceId;
+                    existingPermission.TimeStart = request.TimeStart;
+                    existingPermission.TimeEnd = request.TimeEnd;
+                    existingPermission.FaceImage = user.FaceImage;
+                    existingPermission.CreatedAt = DateTime.UtcNow;
+
+                    var rpcParamsDto = new RcpParamsDTO()
+                    {
+                        username = user.UserName,
+                        userId = userId,
+                        endTime = request.TimeEnd,
+                        startTime = request.TimeStart,
+                        faceImage = user.FaceImage,
+                        FingerPrintImage = user.FingerprintImage,
+                        identifyNumber = user.IdNumber, //CCCD
                     };
                     var rpcRequestDto = new RcpRequestDTO()
                     {
@@ -74,33 +149,17 @@ namespace SCIC_BE.Services
                         Params = rpcParamsDto
                     };
 
-                    var response = await _rcpService.SendRpcRequestAsync(rpcRequestDto);
+                    // Gửi RPC request
+                    response = await _rcpService.SendRpcRequestAsync(rpcRequestDto);
 
-                    await _permissionRepository.AddPermissionAsync(permission);
-                    createdPermissions.Add(permission);
+                    // Cập nhật quyền trong cơ sở dữ liệu
+                    await _permissionRepository.UpdatePermissionAsync(existingPermission);
+                    updatedPermissions.Add(existingPermission);
                 }
             }
-            return createdPermissions;
+            return updatedPermissions;
         }
 
-        public async Task UpdatePermission(Guid PermisionId, PermissionModel permission)
-        {
-            var existingPermission = await _permissionRepository.GetPermissionsByIdAsync(PermisionId);
-
-            if (existingPermission == null)
-            {
-                throw new Exception("Permissions info not found");
-            }
-
-            existingPermission.UserId = permission.UserId;
-            existingPermission.DeviceId = permission.DeviceId;
-            existingPermission.TimeStart = permission.TimeStart;
-            existingPermission.TimeEnd = permission.TimeEnd;
-            existingPermission.CreatedAt = permission.CreatedAt;
-
-            await _permissionRepository.UpdatePermissionAsync(existingPermission);
-
-        }
 
         public async Task DeletePermission(Guid PermisionId)
         {
@@ -113,5 +172,6 @@ namespace SCIC_BE.Services
 
             await _permissionRepository.DeletePermissionAsync(PermisionId);
         }
+
     }
 }

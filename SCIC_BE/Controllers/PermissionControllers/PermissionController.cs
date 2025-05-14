@@ -51,7 +51,11 @@ namespace SCIC_BE.Controllers.PermissionControllers
             try
             {
                 var permissons = await _permissionService.CreatePermission(request);
-                return Ok(permissons);
+                return Ok(new
+                {
+                    method = "userSchedule",
+                    @params = permissons
+                });
             }
             catch (Exception ex)
             {
@@ -64,7 +68,7 @@ namespace SCIC_BE.Controllers.PermissionControllers
         }
 
         [HttpPut("update-permission/{id}")]
-        public async Task<IActionResult> UpdatePermission([FromBody] PermissionModel request, Guid id)
+        public async Task<IActionResult> UpdatePermission([FromBody] PermissionDataRequestDTO request, Guid id)
         {
             try
             {

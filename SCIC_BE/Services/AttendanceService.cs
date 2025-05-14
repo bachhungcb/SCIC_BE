@@ -1,4 +1,5 @@
 ﻿using SCIC_BE.DTO.AttendanceDTOs;
+using SCIC_BE.DTO.RcpDTOs;
 using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
@@ -32,7 +33,7 @@ namespace SCIC_BE.Services
             return attendance ?? throw new Exception("Attendance not found");
         }
 
-        public async Task CreateAttendanceAsync(CreateAttendanceDTO attendanceInfo)
+        public async Task<AttendanceModel> CreateAttendanceAsync(CreateAttendanceDTO attendanceInfo)
         {
             var createAttendanceInfo = new AttendanceModel();
 
@@ -56,7 +57,10 @@ namespace SCIC_BE.Services
             createAttendanceInfo.TimeStart = attendanceInfo.TimeStart;
             createAttendanceInfo.CreatedAt = DateTime.UtcNow;
 
+
             await _attendanceRepository.AddAsync(createAttendanceInfo);
+
+            return createAttendanceInfo;
 
         }
 
@@ -87,9 +91,12 @@ namespace SCIC_BE.Services
         }
         public async Task DeleteAttendanceAsync(Guid id)
         {
+            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(id);
 
+            if (attendance == null)
+                throw new Exception("attendance info not found");
+            await _attendanceRepository.DeleteAsync(id);
         }
-
 
     }
 }

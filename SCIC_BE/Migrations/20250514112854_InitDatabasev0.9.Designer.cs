@@ -12,8 +12,8 @@ using SCIC_BE.Data;
 namespace SCIC_BE.Migrations
 {
     [DbContext(typeof(ScicDbContext))]
-    [Migration("20250512103355_InitDatabasev0.2")]
-    partial class InitDatabasev02
+    [Migration("20250514112854_InitDatabasev0.9")]
+    partial class InitDatabasev09
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,14 +24,6 @@ namespace SCIC_BE.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("SCIC_BE.DTO.StudentDTOs.AttendanceStudentDTO", b =>
-                {
-                    b.Property<bool>("IsAttended")
-                        .HasColumnType("bit");
-
-                    b.ToTable("AttendanceStudentDTO");
-                });
 
             modelBuilder.Entity("SCIC_BE.Models.AttendanceModel", b =>
                 {

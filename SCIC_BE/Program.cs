@@ -19,6 +19,7 @@ using System.Text.Json;
 using System.Security.Claims;
 using SCIC_BE.Repositories.LecturerRepository;
 using SCIC_BE.Repositories.PermissionRepository;
+using SCIC_BE.Repositories.AttendanceRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -164,6 +165,9 @@ builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+
 builder.Services.AddScoped<RcpService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<PasswordService>();
@@ -198,7 +202,7 @@ app.MapControllers();
 app.Lifetime.ApplicationStarted.Register(() =>
 {
     app.Services.GetRequiredService<ILogger<Program>>()
-        .LogInformation("Backend is ready! Access Swagger UI at: https://localhost:8081/swagger/index.html");
+        .LogInformation("Backend is ready! Access Swagger UI at: http://localhost:8090/swagger/index.html");
 });
 
 app.Run();
