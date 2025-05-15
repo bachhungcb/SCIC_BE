@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SCIC_BE.Data;
 
@@ -11,9 +12,11 @@ using SCIC_BE.Data;
 namespace SCIC_BE.Migrations
 {
     [DbContext(typeof(ScicDbContext))]
-    partial class ScicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250515051322_InitDatbasev0.9.1")]
+    partial class InitDatbasev091
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,9 +40,6 @@ namespace SCIC_BE.Migrations
                     b.Property<Guid>("LecturerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("TimeEnd")
                         .HasColumnType("datetime2");
 
@@ -49,6 +49,30 @@ namespace SCIC_BE.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Attendances");
+                });
+
+            modelBuilder.Entity("SCIC_BE.Models.AttendanceStudentModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AttendanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsAttended")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttendanceId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("AttendanceStudentModel");
                 });
 
             modelBuilder.Entity("SCIC_BE.Models.DeviceModel", b =>
@@ -219,6 +243,25 @@ namespace SCIC_BE.Migrations
                     b.ToTable("UserRoles");
                 });
 
+            modelBuilder.Entity("SCIC_BE.Models.AttendanceStudentModel", b =>
+                {
+                    b.HasOne("SCIC_BE.Models.AttendanceModel", "Attendance")
+                        .WithMany("Students")
+                        .HasForeignKey("AttendanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SCIC_BE.Models.StudentModel", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Attendance");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("SCIC_BE.Models.LecturerModel", b =>
                 {
                     b.HasOne("SCIC_BE.Models.UserModel", "User")
@@ -258,6 +301,11 @@ namespace SCIC_BE.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SCIC_BE.Models.AttendanceModel", b =>
+                {
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("SCIC_BE.Models.RoleModel", b =>

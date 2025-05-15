@@ -5,10 +5,10 @@ namespace SCIC_BE.Interfaces.IServices
 {
     public interface IAttendanceService
     {
-        Task<List<AttendanceModel>> GetListAttendanceAsync();
-        Task<AttendanceModel> GetAttendanceByIdAsync(Guid id);
-        Task<AttendanceModel> CreateAttendanceAsync(CreateAttendanceDTO attendanceInfo);
-        Task UpdateAttendanceAsync(Guid id, UpdateAttendanceDTO updateInfo);
+        Task<List<AttendanceDTO>> GetListAttendanceAsync();
+        Task<AttendanceDTO> GetAttendanceByIdAsync(Guid id);
+        Task<List<AttendanceModel>> CreateAttendanceAsync(CreateAttendanceDTO attendanceInfo);
+        Task<List<AttendanceModel>> UpdateAttendanceAsync(Guid id, UpdateAttendanceDTO updateInfo);
         Task DeleteAttendanceAsync(Guid id);
     }
 }

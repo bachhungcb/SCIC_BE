@@ -2,7 +2,6 @@
 
 namespace SCIC_BE.DTO.StudentDTOs
 {
-    [NotMapped]
     public class StudentDTO
     {
         public Guid UserId { get; set; }

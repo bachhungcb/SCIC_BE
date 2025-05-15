@@ -35,7 +35,7 @@ namespace SCIC_BE.Controllers.AttendanceControllers
 
         }
 
-        [HttpGet("attendance/{id}")]
+        [HttpGet("attendance/{id:guid}")]
         public async Task<IActionResult> GetAnAttendance(Guid id)
         {
             try
@@ -58,14 +58,11 @@ namespace SCIC_BE.Controllers.AttendanceControllers
         {
             try
             {
-                var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
                 var attendance = await _attendanceService.CreateAttendanceAsync(attendanceInfo);
                 return Ok(new
                 {
-                    method = "userSchedule",
-                    param = attendance,
-                    token,
+                    method = "createAttendance",
+                    @param = attendance,
                 });
             }
             catch (Exception ex)
@@ -77,5 +74,51 @@ namespace SCIC_BE.Controllers.AttendanceControllers
                 });
             }
         }
+
+        [HttpPut("update-attendance/{id:guid}")]
+        public async Task<IActionResult> UpdateAttendance(Guid id, [FromBody] UpdateAttendanceDTO attendanceInfo)
+        {
+            try
+            {
+                var updateAttendance = await _attendanceService.UpdateAttendanceAsync(id, attendanceInfo);
+                return Ok(new
+                {
+                    method = "updateAttendance",
+                    @param = updateAttendance,
+                });
+                
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred",
+                    details = ex.Message
+                });
+            }
+        }
+
+        [HttpDelete("delete-attendance/{id:guid}")]
+        public async Task<IActionResult> DeleteAttendance(Guid AttendanceId)
+        {
+            try
+            {
+                await _attendanceService.DeleteAttendanceAsync(AttendanceId);
+                return Ok(new
+                {
+                    method = "deleteAttendance",
+                    @param = AttendanceId,
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred",
+                    details = ex.Message
+                });
+            }
+        }
+        
     }
 }
