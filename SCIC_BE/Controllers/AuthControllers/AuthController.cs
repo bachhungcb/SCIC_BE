@@ -151,6 +151,7 @@ namespace SCIC_BE.Controllers.AuthControllers
         }
 
         [HttpPut("forgot-password/{email}")]
+        [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(string email, string newPassword)
         {
             try
