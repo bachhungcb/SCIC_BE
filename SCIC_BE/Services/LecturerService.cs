@@ -15,16 +15,19 @@ namespace SCIC_BE.Services
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IStudentInfoRepository _studentInfoRepository;
 
         public LecturerService(ILecturerRepository lecturerRepository,
                                 IUserRepository userRepository,
                                 IRoleRepository roleRepository,
-                                IUserRoleRepository userRoleRepository)
+                                IUserRoleRepository userRoleRepository,
+                                IStudentInfoRepository studentInfoRepository)
         {
             _lecturerRepository = lecturerRepository;
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
+            _studentInfoRepository = studentInfoRepository;
         }
 
         public async Task<List<LecturerDTO>> GetListLecturerAsync()
@@ -64,10 +67,16 @@ namespace SCIC_BE.Services
 
             if (user == null)
             {
-
                 throw new Exception("User not found");
             }
 
+            var student = await _studentInfoRepository.GetByStudentIdAsync(id);
+
+            if (student != null)
+            {
+                throw new Exception("Student can not be lecturer");
+            }
+            
             var lecturerRole = await _roleRepository.GetRoleByNameAsync("Lecturer");
             if (lecturerRole == null)
             {
