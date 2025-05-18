@@ -71,9 +71,8 @@ namespace SCIC_BE.Services
 
                     var rpcRequestDto = new RcpRequestDTO()
                     {
-                        Token = request.Token,
                         DeviceId = deviceId,
-                        Method = "userSchedule",
+                        Method = "createPermission",
                         Params = rpcParamsDto
                     };
 
@@ -104,7 +103,6 @@ namespace SCIC_BE.Services
         public async Task<List<PermissionModel>> UpdatePermission(Guid PermissionId ,PermissionDataRequestDTO request)
         {
             var updatedPermissions = new List<PermissionModel>();
-            var response = "";
 
             // Duyệt qua từng userId
             foreach (var userId in request.UserIds)
@@ -143,14 +141,13 @@ namespace SCIC_BE.Services
                     };
                     var rpcRequestDto = new RcpRequestDTO()
                     {
-                        Token = request.Token,
                         DeviceId = deviceId,
-                        Method = "userSchedule",
+                        Method = "updatePermission",
                         Params = rpcParamsDto
                     };
 
                     // Gửi RPC request
-                    response = await _rcpService.SendRpcRequestAsync(rpcRequestDto);
+                    await _rcpService.SendRpcRequestAsync(rpcRequestDto);
 
                     // Cập nhật quyền trong cơ sở dữ liệu
                     await _permissionRepository.UpdatePermissionAsync(existingPermission);
@@ -170,6 +167,19 @@ namespace SCIC_BE.Services
                 throw new Exception("Permissions info not found");
             }
 
+            var rcpParamDto = new RcpParamsDTO()
+            {
+                permissionId = PermisionId
+            };
+
+            var rcpRequestDto = new RcpRequestDTO()
+            {
+                DeviceId = existingPermission.DeviceId,
+                Method = "deletePermission",
+                Params = rcpParamDto
+            };
+            
+            await _rcpService.SendRpcRequestAsync(rcpRequestDto);
             await _permissionRepository.DeletePermissionAsync(PermisionId);
         }
 

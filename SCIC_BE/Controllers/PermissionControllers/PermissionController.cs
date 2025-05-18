@@ -53,7 +53,7 @@ namespace SCIC_BE.Controllers.PermissionControllers
                 var permissons = await _permissionService.CreatePermission(request);
                 return Ok(new
                 {
-                    method = "userSchedule",
+                    method = "createPermission",
                     @params = permissons
                 });
             }
@@ -92,7 +92,10 @@ namespace SCIC_BE.Controllers.PermissionControllers
             try
             {
                 await _permissionService.DeletePermission(id);
-                return Ok(new { message = "Permission deleted successfully" });
+                return Ok(new
+                {
+                    message = "Permission deleted successfully"
+                });
             }
             catch (Exception ex)
             {

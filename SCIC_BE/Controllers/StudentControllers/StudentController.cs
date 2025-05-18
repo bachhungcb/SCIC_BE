@@ -12,12 +12,12 @@ namespace SCIC_BE.Controllers.StudentControllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Default User, Student")]
+    [Authorize(Roles = "Admin, Default User, Student")]
     public class StudentController : ControllerBase
     {
-        private readonly StudentService _studentService;
+        private readonly IStudentService _studentService;
 
-        public StudentController(StudentService studentService)
+        public StudentController(IStudentService studentService)
         {
             _studentService = studentService;
         }
