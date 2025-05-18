@@ -94,6 +94,7 @@ namespace SCIC_BE.Services
                 await _userRoleRepository.AddAsync(userRole);
             }
 
+            await _userRoleRepository.RemoveDefaultRoleForUserAsync(id);
             var existingLecturerInfo = await _lecturerRepository.GetLecturerByIdAsync(id);
             if (existingLecturerInfo == null)
             {

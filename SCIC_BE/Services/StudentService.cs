@@ -51,7 +51,7 @@ namespace SCIC_BE.Services
 
                 throw new Exception("User not found");
             }
-
+            
             var studentRole = await _roleRepository.GetRoleByNameAsync("Student");
             if (studentRole == null)
             { 
@@ -69,6 +69,7 @@ namespace SCIC_BE.Services
                 await _userRoleRepository.AddAsync(userRole);
             }
 
+            await _userRoleRepository.RemoveDefaultRoleForUserAsync(id);
             var existingStudentInfo = await _studentInfoRepository.GetByStudentIdAsync(id);
 
             if (existingStudentInfo == null)
