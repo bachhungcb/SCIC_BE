@@ -28,6 +28,12 @@ namespace SCIC_BE.Controllers.UserControllers
             return Ok(user);
         }
 
+        [HttpGet("get-defualt-user")]
+        public async Task<IActionResult> GetUserWithDefaultRole()
+        {
+            var userList = await _userInfoService.GetListUserWithDefaultRoleAsync();
+            return Ok(userList);
+        }
        
 
     }

@@ -107,5 +107,14 @@ namespace SCIC_BE.Services
 
             await _userRepository.UpdateUserAsync(userInfo);
         }
+
+        public async Task<List<UserDTO>> GetListUserWithDefaultRoleAsync()
+        {
+            var userList = await _userRepository.GetAllUsersAsync();
+            var userListWithoutRole = userList.Where(user => user.UserRoles.Any(role => role.RoleId == 4));
+            
+            return userListWithoutRole.Select(user => ConvertToUserDTO(user)).ToList();
+           
+        }
     }
 }

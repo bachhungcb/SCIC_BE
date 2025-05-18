@@ -5,9 +5,10 @@ namespace SCIC_BE.Interfaces.IServices
 {
     public interface IUserService
     {
-        Task CreateUserAsync(CreateUserDTO dto);
         Task<UserDTO> GetUserAsync(Guid id);
         Task<List<UserDTO>> GetListUserAsync();
+        Task<List<UserDTO>> GetListUserWithDefaultRoleAsync();
+        Task CreateUserAsync(CreateUserDTO dto);
         Task UpdateUserAsync(Guid id, UpdateUserDTO dto);
         Task DeleteUserAsync(Guid id);
     }
