@@ -98,16 +98,16 @@ namespace SCIC_BE.Controllers.AttendanceControllers
             }
         }
 
-        [HttpDelete("delete-attendance/{id:guid}")]
-        public async Task<IActionResult> DeleteAttendance(Guid id)
+        [HttpDelete("delete-attendance/{attendanceId:guid}")]
+        public async Task<IActionResult> DeleteAttendance(Guid attendanceId)
         {
             try
             {
-                await _attendanceService.DeleteAttendanceAsync(id);
+                await _attendanceService.DeleteAttendanceAsync(attendanceId);
                 return Ok(new
                 {
                     method = "deleteAttendance",
-                    @param = id,
+                    @param = attendanceId,
                 });
             }
             catch (Exception ex)
