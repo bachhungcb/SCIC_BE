@@ -152,13 +152,13 @@ namespace SCIC_BE.Services
             
            return updatedAttendanceInfo;  
         }
-        public async Task DeleteAttendanceAsync(Guid id)
+        public async Task DeleteAttendanceAsync(Guid AttendanceId)
         {
-            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(id);
+            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(AttendanceId);
 
             if (attendance == null)
                 throw new Exception("attendance info not found");
-            await _attendanceRepository.DeleteAsync(id);
+            await _attendanceRepository.DeleteAsync(AttendanceId);
         }
 
     }
