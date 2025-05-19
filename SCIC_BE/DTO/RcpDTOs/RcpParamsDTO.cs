@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SCIC_BE.Interfaces.IDto;
 
 namespace SCIC_BE.DTO.RcpDTOs
 {
-    public class RcpParamsDTO
+    public class RcpParamsDTO : IRcpParams
     {
         public Guid userId { get; set; }
         public Guid deviceId { get; set; }
