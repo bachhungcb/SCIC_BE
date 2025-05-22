@@ -177,20 +177,55 @@ namespace SCIC_BE.Services
         public async Task<List<AttendanceModel>> UpdateAttendanceAsync(Guid attendanceId, UpdateAttendanceDTO updateInfo)
         {
             var updatedAttendances = new List<AttendanceModel>();
+            var attendanceStudents = new List<AttendanceStudentDTO>();
 
             foreach (var studentId in updateInfo.StudentIds)
             {
                 var existingAttendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceId)
                     ?? throw new Exception("Attendance not found");
+                
+                var student = await _studentService.GetStudentByIdAsync(studentId)
+                              ?? throw new Exception($"Student with id {studentId} not found");
 
+                attendanceStudents.Add(new AttendanceStudentDTO
+                {
+                    Student = student,
+                    IsAttended = false
+                });
+
+                
                 existingAttendance.DeviceId = updateInfo.DeviceId;
                 existingAttendance.StudentId = studentId;
                 existingAttendance.LecturerId = updateInfo.LecturerId;
-
+                
+                
                 await _attendanceRepository.UpdateAsync(existingAttendance);
                 updatedAttendances.Add(existingAttendance);
             }
+            var updateAttendanceRcp = new UpdateAttendanceRcpDto()
+            {
+                LecturerId = updateInfo.LecturerId,
+                AttendanceStudents = attendanceStudents,
+                DeviceId = updateInfo.DeviceId,
+            };
 
+            var rpcRequestDto = new RcpRequestDTO
+            {
+                DeviceId = updateAttendanceRcp.DeviceId,
+                Method = "updatePermission",
+                Params = updateAttendanceRcp
+            };
+
+            try
+            {
+                await _rcpService.SendRpcRequestAsync(rpcRequestDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error occurred while processing RPC request: {ex.Message}");
+                throw new Exception("Error occurred while processing RPC request");
+            }
+          
             return updatedAttendances;
         }
 
@@ -198,7 +233,7 @@ namespace SCIC_BE.Services
         {
             var attendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceId)
                 ?? throw new Exception("Attendance info not found");
-
+            
             await _attendanceRepository.DeleteAsync(attendanceId);
         }
     }
