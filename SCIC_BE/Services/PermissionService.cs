@@ -68,7 +68,7 @@ namespace SCIC_BE.Services
             };
 
             var permissionUsers = new List<PermissionUser>();
-            var rpcUserDTOs = new List<UserDTO>();
+            var rpcUserDtOs = new List<UserDTO>();
 
             foreach (var userId in request.UserIds)
             {
@@ -76,7 +76,7 @@ namespace SCIC_BE.Services
                 if (user == null)
                     throw new Exception($"User with ID {userId} not found.");
 
-                rpcUserDTOs.Add(ConvertToUserDTO(user));
+                rpcUserDtOs.Add(ConvertToUserDTO(user));
 
                 permissionUsers.Add(new PermissionUser
                 {
@@ -90,7 +90,7 @@ namespace SCIC_BE.Services
             // Gửi RPC cho từng thiết bị
             var rpcParamsDto = new RcpParamsDTO
             {
-                Users = rpcUserDTOs,
+                Users = rpcUserDtOs,
                 DeviceId = request.DeviceIds,
                 TimeStart = request.TimeStart,
                 TimeEnd = request.TimeEnd,
@@ -163,7 +163,7 @@ namespace SCIC_BE.Services
                 var rpcRequestDto = new RcpRequestDTO
                 {
                     DeviceId = deviceId,
-                    Method = "createPermission",
+                    Method = "updatePermission",
                     Params = rpcParamsDto
                 };
 

@@ -50,11 +50,10 @@ namespace SCIC_BE.Controllers.PermissionControllers
         {
             try
             {
-                var permissons = await _permissionService.CreatePermission(request);
+                var permission = await _permissionService.CreatePermission(request);
                 return Ok(new
                 {
-                    method = "createPermission",
-                    @params = permissons
+                    message = "Create Permission Success"
                 });
             }
             catch (Exception ex)
