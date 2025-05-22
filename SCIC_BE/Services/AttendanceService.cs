@@ -85,34 +85,16 @@ namespace SCIC_BE.Services
 
         public async Task<AttendanceDTO> GetAttendanceByIdAsync(Guid id)
         {
-            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(id)
-                ?? throw new Exception("Attendance not found");
-
-            var lecturer = await _lecturerService.GetLecturerByIdAsync(attendance.LecturerId)
-                ?? throw new Exception("Lecturer not found");
-
-            var student = await _studentService.GetStudentByIdAsync(attendance.StudentId)
-                ?? throw new Exception("Student not found");
-
-            var studentList = new List<AttendanceStudentDTO>
-            {
-                new AttendanceStudentDTO
-                {
-                    Student = student,
-                    IsAttended = false
-                }
-            };
-
-            return new AttendanceDTO
-            {
-                Id = attendance.Id,
-                Lecturer = lecturer,
-                Student = studentList,
-                DeviceId = attendance.DeviceId,
-                TimeStart = attendance.TimeStart,
-                TimeEnd = attendance.TimeEnd,
-                CreatedAt = attendance.CreatedAt
-            };
+            var attendances = await GetListAttendanceAsync();
+            
+            
+            var attendance = attendances.FirstOrDefault(a => a.Id == id);
+            if (attendance == null)
+                throw new Exception("Attendance not found");
+            
+            var result = new AttendanceDTO();
+            
+            return attendance;
         }
 
         public async Task<CreateAttendanceRCPDto> CreateAttendanceAsync(CreateAttendanceDTO attendanceInfo)
