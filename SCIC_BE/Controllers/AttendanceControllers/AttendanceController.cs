@@ -98,6 +98,27 @@ namespace SCIC_BE.Controllers.AttendanceControllers
             }
         }
 
+        [HttpPut("update-student-attendance/{attendanceId:guid}/{studentId:guid}")]
+        public async Task<IActionResult> UpdateStudentAttendance(Guid attendanceId, Guid studentId)
+        {
+            try
+            {
+                await _attendanceService.UpdateStudentAttendancAsync(attendanceId, studentId);
+                return Ok(new
+                {
+                    message = "Update student attendace "
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred",
+                    details = ex.Message
+                });
+            }
+        }
+
         [HttpDelete("delete-attendance/{attendanceId:guid}")]
         public async Task<IActionResult> DeleteAttendance(Guid attendanceId)
         {

@@ -9,6 +9,7 @@ namespace SCIC_BE.Repositories.AttendanceRepository
         Task AddAsync(AttendanceModel model);
         Task UpdateAsync(AttendanceModel model);
         Task DeleteAsync(Guid id);
+        Task UpdateStudentAttentAsync(Guid attendanceId, Guid studentId);
 
     }
 }

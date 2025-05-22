@@ -211,12 +211,23 @@ namespace SCIC_BE.Services
             return updatedAttendances;
         }
 
-        public async Task DeleteAttendanceAsync(Guid attendanceId)
+        public async Task DeleteAttendanceAsync(Guid attendanceid)
         {
-            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceId)
+            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceid)
                 ?? throw new Exception("Attendance info not found");
             
-            await _attendanceRepository.DeleteAsync(attendanceId);
+            await _attendanceRepository.DeleteAsync(attendanceid);
+        }
+
+        public async Task UpdateStudentAttendancAsync(Guid attendanceId, Guid studentId)
+        {
+            var attendance = await GetAttendanceByIdAsync(attendanceId);
+
+            foreach (var student in attendance.Student.Where(student => student.Student.UserId == studentId))
+            {
+               await _attendanceRepository.UpdateStudentAttentAsync(attendanceId, student.Student.UserId);
+            }
+            
         }
     }
 }

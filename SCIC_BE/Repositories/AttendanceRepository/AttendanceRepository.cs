@@ -50,5 +50,24 @@ namespace SCIC_BE.Repositories.AttendanceRepository
             _context.Attendances.Remove(attendance);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateStudentAttentAsync(Guid attendanceId, Guid studentId)
+        {
+            var attendance = await GetByAttendanceIdAsync(attendanceId);
+            
+            if (attendance == null)
+            {
+                throw new KeyNotFoundException("Attendance not found");
+            }
+
+            if (attendance.StudentId == studentId)
+            {
+                attendance.IsAttended = true;
+            }
+
+            // Lưu thay đổi vào database
+            await _context.SaveChangesAsync();
+            
+        }
     }
 }
