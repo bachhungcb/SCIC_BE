@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SCIC_BE.DTO.StudentDTOs;
+using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Models;
 
 namespace SCIC_BE.Data
@@ -23,6 +24,8 @@ namespace SCIC_BE.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<PermissionUser>()
+                .HasKey(pu => new { pu.PermissionId, pu.UserId });
 
             // Config bảng UserRole: composite key
             modelBuilder.Entity<UserRoleModel>()
@@ -49,7 +52,6 @@ namespace SCIC_BE.Data
                 .HasOne(l => l.User)
                 .WithOne(u => u.LecturerInfo)
                 .HasForeignKey<LecturerModel>(l => l.UserId);
-
         }
 
     }

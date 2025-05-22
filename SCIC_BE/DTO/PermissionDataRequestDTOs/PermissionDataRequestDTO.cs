@@ -6,7 +6,6 @@
         public List<Guid> DeviceIds { get; set; }
         public DateTime TimeStart { get; set; }
         public DateTime TimeEnd { get; set; }
-
-        public required string Token { get; set; }
+        
     }
 }

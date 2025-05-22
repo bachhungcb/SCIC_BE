@@ -7,6 +7,8 @@ namespace SCIC_BE.Repositories.PermissionRepository
     {
         Task<List<PermissionModel>> GetAllPermissionsAsync();
         Task<PermissionModel> GetPermissionsByIdAsync(Guid id);
+        Task<List<PermissionDTO>> GetAllPermissionsDtoAsync();
+        Task<PermissionDTO> GetPermissionDToByIdAsync(Guid id);
         Task AddPermissionAsync(PermissionModel requestInfo);
         Task UpdatePermissionAsync(PermissionModel requestInfo);
         Task DeletePermissionAsync(Guid id);

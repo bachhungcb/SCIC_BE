@@ -18,6 +18,7 @@ namespace SCIC_BE.Models
         public ICollection<UserRoleModel> UserRoles { get; set; }
         public StudentModel StudentInfo { get; set; }
         public LecturerModel LecturerInfo { get; set; }
+        public ICollection<PermissionUser> PermissionUsers { get; set; }
 
     }
 }

@@ -20,24 +20,19 @@ namespace SCIC_BE.Services
 
         private UserDTO ConvertToUserDTO(UserModel user)
         {
-            var userRoleDTO = user.UserRoles.Select(role => new UserRoleDTO
-            {
-                RoleId = role.RoleId,
-                RoleName = role.Role.Name,
-            }).ToList();
-
             return new UserDTO
             {
                 Id = user.Id,
-                IdNumber = user.IdNumber,
                 UserName = user.UserName,
                 FullName = user.FullName,
+                IdNumber = user.IdNumber,
                 Email = user.Email,
                 FaceImage = user.FaceImage,
                 FingerprintImage = user.FingerprintImage,
-                UserRoles = userRoleDTO
+                UserRoles = user.UserRoles?.Select(role => role.Role?.Name).Where(name => name != null).ToList()
             };
         }
+
 
         public async Task CreateUserAsync(CreateUserDTO dto)
         {

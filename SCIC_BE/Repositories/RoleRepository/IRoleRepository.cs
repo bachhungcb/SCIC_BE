@@ -9,5 +9,6 @@ namespace SCIC_BE.Repositories.RoleRepository
         Task<List<RoleDTO>> GetAllRolesAsync();
         Task<RoleDTO> GetRoleByNameAsync(string name);
         Task AddRoleAsync(RoleDTO roleDTO);
+        Task<string> GetRoleNameByRoleIdAsync(int roleId);
     }
 }

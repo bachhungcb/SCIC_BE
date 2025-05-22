@@ -5,10 +5,10 @@ namespace SCIC_BE.Interfaces.IServices
 {
     public interface IPermissionService
     {
-        Task<List<PermissionModel>> GetListPermissionsAsync();
-        Task<PermissionModel> GetPermissionByPermissonIdAsync(Guid id);
-        Task<List<PermissionModel>> CreatePermission(PermissionDataRequestDTO request); //<List<PermissionModel>>
-        Task<List<PermissionModel>> UpdatePermission(Guid PermissionId, PermissionDataRequestDTO request);
+        Task<List<PermissionDTO>> GetListPermissionsAsync();
+        Task<PermissionDTO> GetPermissionByPermissonIdAsync(Guid id);
+        Task<PermissionModel> CreatePermission(PermissionDataRequestDTO request); //<List<PermissionModel>>
+        Task<PermissionModel> UpdatePermission(Guid PermissionId, PermissionDataRequestDTO request);
         Task DeletePermission(Guid PermisionId);
     }
 }

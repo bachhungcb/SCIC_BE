@@ -14,10 +14,11 @@ namespace SCIC_BE.Services
         private readonly ILecturerService _lecturerService;
         private readonly RcpService _rcpService;
 
-        public AttendanceService(IAttendanceRepository attendanceRepository,
-                                    IStudentService studentService,
-                                    ILecturerService lecturerService,
-                                    RcpService rcpService)
+        public AttendanceService(
+            IAttendanceRepository attendanceRepository,
+            IStudentService studentService,
+            ILecturerService lecturerService,
+            RcpService rcpService)
         {
             _attendanceRepository = attendanceRepository;
             _studentService = studentService;
@@ -32,18 +33,18 @@ namespace SCIC_BE.Services
             if (attendances == null || !attendances.Any())
                 throw new Exception("Attendances not found");
 
-            var groupedAttendances = attendances
-                .GroupBy(a => new
-                {
-                    a.LecturerId,
-                    a.DeviceId,
-                    a.TimeStart,
-                    a.TimeEnd,
-                });
+            // Group theo các trường đặc trưng của 1 buổi điểm danh
+            var grouped = attendances.GroupBy(a => new
+            {
+                a.LecturerId,
+                a.DeviceId,
+                a.TimeStart,
+                a.TimeEnd,
+            });
 
-            var attendanceDtos = new List<AttendanceDTO>();
+            var result = new List<AttendanceDTO>();
 
-            foreach (var group in groupedAttendances)
+            foreach (var group in grouped)
             {
                 var lecturer = await _lecturerService.GetLecturerByIdAsync(group.Key.LecturerId);
                 var studentDtos = new List<AttendanceStudentDTO>();
@@ -51,21 +52,25 @@ namespace SCIC_BE.Services
                 foreach (var record in group)
                 {
                     var student = await _studentService.GetStudentByIdAsync(record.StudentId);
+                    if (student == null)
+                        continue; // hoặc throw exception nếu muốn
+
                     studentDtos.Add(new AttendanceStudentDTO
                     {
                         Student = student,
-                        IsAttended = record.IsAttended // hoặc lấy từ DB nếu có
+                        IsAttended = record.IsAttended
                     });
                 }
+
                 // Loại bỏ sinh viên trùng
                 studentDtos = studentDtos
                     .GroupBy(s => s.Student.UserId)
                     .Select(g => g.First())
                     .ToList();
 
-                attendanceDtos.Add(new AttendanceDTO
+                result.Add(new AttendanceDTO
                 {
-                    Id = group.First().Id, // lấy ID đầu tiên từ group
+                    Id = group.First().Id,
                     Lecturer = lecturer,
                     Student = studentDtos,
                     DeviceId = group.Key.DeviceId,
@@ -75,27 +80,30 @@ namespace SCIC_BE.Services
                 });
             }
 
-            return attendanceDtos;
+            return result;
         }
-
-
-
 
         public async Task<AttendanceDTO> GetAttendanceByIdAsync(Guid id)
         {
-            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(id);
-            var student = await _studentService.GetStudentByIdAsync(attendance.StudentId);
-            var lecturer = await _lecturerService.GetLecturerByIdAsync(attendance.LecturerId);
-            var studentList = new List<AttendanceStudentDTO>();
-            var attendStudent = new AttendanceStudentDTO()
+            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(id)
+                ?? throw new Exception("Attendance not found");
+
+            var lecturer = await _lecturerService.GetLecturerByIdAsync(attendance.LecturerId)
+                ?? throw new Exception("Lecturer not found");
+
+            var student = await _studentService.GetStudentByIdAsync(attendance.StudentId)
+                ?? throw new Exception("Student not found");
+
+            var studentList = new List<AttendanceStudentDTO>
             {
-                Student = student,
-                IsAttended = false
+                new AttendanceStudentDTO
+                {
+                    Student = student,
+                    IsAttended = false
+                }
             };
-            
-            studentList.Add(attendStudent);
-            
-            var attendanceDto = new AttendanceDTO()
+
+            return new AttendanceDTO
             {
                 Id = attendance.Id,
                 Lecturer = lecturer,
@@ -105,8 +113,6 @@ namespace SCIC_BE.Services
                 TimeEnd = attendance.TimeEnd,
                 CreatedAt = attendance.CreatedAt
             };
-            
-            return attendanceDto ?? throw new Exception("Attendance not found");
         }
 
         public async Task<CreateAttendanceRCPDto> CreateAttendanceAsync(CreateAttendanceDTO attendanceInfo)
@@ -115,9 +121,8 @@ namespace SCIC_BE.Services
 
             foreach (var studentId in attendanceInfo.StudentIds)
             {
-                var student = await _studentService.GetStudentByIdAsync(studentId);
-                if (student == null)
-                    throw new Exception($"Student with id {studentId} not found");
+                var student = await _studentService.GetStudentByIdAsync(studentId)
+                    ?? throw new Exception($"Student with id {studentId} not found");
 
                 attendanceStudents.Add(new AttendanceStudentDTO
                 {
@@ -139,69 +144,62 @@ namespace SCIC_BE.Services
                 await _attendanceRepository.AddAsync(attendance);
             }
 
-            var createAttendanceRcp = new CreateAttendanceRCPDto()
+            var createAttendanceRcp = new CreateAttendanceRCPDto
             {
                 LecturerId = attendanceInfo.LecturerId,
-                AttendanceStudents = attendanceStudents, // gán danh sách chi tiết
+                AttendanceStudents = attendanceStudents,
                 DeviceId = attendanceInfo.DeviceId,
                 TimeStart = attendanceInfo.TimeStart,
                 TimeEnd = attendanceInfo.TimeEnd,
                 CreatedAt = DateTime.UtcNow,
             };
-            
-            var rpcRequestDto = new RcpRequestDTO()
+
+            var rpcRequestDto = new RcpRequestDTO
             {
                 DeviceId = createAttendanceRcp.DeviceId,
                 Method = "createPermission",
                 Params = createAttendanceRcp
             };
+
             try
             {
-                // Gửi yêu cầu RPC
                 await _rcpService.SendRpcRequestAsync(rpcRequestDto);
-                
             }
             catch (Exception ex)
             {
-                // Log thông tin chi tiết về lỗi
-                Console.WriteLine($"Error occurred while processing RPC request for : {ex.Message}");
-                throw new Exception($"Error occurred while processing RPC request for");
+                Console.WriteLine($"Error occurred while processing RPC request: {ex.Message}");
+                throw new Exception("Error occurred while processing RPC request");
             }
-            
+
             return createAttendanceRcp;
         }
 
-
-
         public async Task<List<AttendanceModel>> UpdateAttendanceAsync(Guid attendanceId, UpdateAttendanceDTO updateInfo)
         {
-            
-           var updatedAttendanceInfo = new List<AttendanceModel>();
-           foreach (var studentId in updateInfo.StudentIds)
-           {
-               var existingAttendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceId);
+            var updatedAttendances = new List<AttendanceModel>();
 
-               if (existingAttendance == null)
-               {
-                   throw new Exception("Attendance not found");
-               }
-               existingAttendance.DeviceId = updateInfo.DeviceId;
-               existingAttendance.StudentId = studentId;
-               existingAttendance.LecturerId = updateInfo.LecturerId;
-               await _attendanceRepository.UpdateAsync(existingAttendance);
-               updatedAttendanceInfo.Add(existingAttendance);
-           }
-            
-           return updatedAttendanceInfo;  
+            foreach (var studentId in updateInfo.StudentIds)
+            {
+                var existingAttendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceId)
+                    ?? throw new Exception("Attendance not found");
+
+                existingAttendance.DeviceId = updateInfo.DeviceId;
+                existingAttendance.StudentId = studentId;
+                existingAttendance.LecturerId = updateInfo.LecturerId;
+
+                await _attendanceRepository.UpdateAsync(existingAttendance);
+                updatedAttendances.Add(existingAttendance);
+            }
+
+            return updatedAttendances;
         }
-        public async Task DeleteAttendanceAsync(Guid AttendanceId)
+
+        public async Task DeleteAttendanceAsync(Guid attendanceId)
         {
-            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(AttendanceId);
+            var attendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceId)
+                ?? throw new Exception("Attendance info not found");
 
-            if (attendance == null)
-                throw new Exception("attendance info not found");
-            await _attendanceRepository.DeleteAsync(AttendanceId);
+            await _attendanceRepository.DeleteAsync(attendanceId);
         }
-
     }
 }

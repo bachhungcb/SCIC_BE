@@ -106,10 +106,7 @@ namespace SCIC_BE.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FaceImage")
+                    b.PrimitiveCollection<string>("DeviceId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -119,16 +116,24 @@ namespace SCIC_BE.Migrations
                     b.Property<DateTime>("TimeStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("SCIC_BE.Models.PermissionUser", b =>
+                {
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PermissionId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PermissionUser");
                 });
 
             modelBuilder.Entity("SCIC_BE.Models.RoleModel", b =>
@@ -233,6 +238,25 @@ namespace SCIC_BE.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SCIC_BE.Models.PermissionUser", b =>
+                {
+                    b.HasOne("SCIC_BE.Models.PermissionModel", "Permission")
+                        .WithMany("PermissionUsers")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SCIC_BE.Models.UserModel", "User")
+                        .WithMany("PermissionUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SCIC_BE.Models.StudentModel", b =>
                 {
                     b.HasOne("SCIC_BE.Models.UserModel", "User")
@@ -263,6 +287,11 @@ namespace SCIC_BE.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SCIC_BE.Models.PermissionModel", b =>
+                {
+                    b.Navigation("PermissionUsers");
+                });
+
             modelBuilder.Entity("SCIC_BE.Models.RoleModel", b =>
                 {
                     b.Navigation("UserRoles");
@@ -272,6 +301,8 @@ namespace SCIC_BE.Migrations
                 {
                     b.Navigation("LecturerInfo")
                         .IsRequired();
+
+                    b.Navigation("PermissionUsers");
 
                     b.Navigation("StudentInfo")
                         .IsRequired();

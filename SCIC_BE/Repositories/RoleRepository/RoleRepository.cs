@@ -63,5 +63,11 @@ namespace SCIC_BE.Repositories.RoleRepository
             await _context.SaveChangesAsync();
         }
 
+        public Task<string> GetRoleNameByRoleIdAsync(int roleId)
+        {
+            var role = _context.Roles.Where(r => r.Id == roleId);
+            return Task.FromResult(role.Select(r => r.Name).First());
+        }
+
     }
 }
