@@ -51,23 +51,16 @@ namespace SCIC_BE.Repositories.AttendanceRepository
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateStudentAttentAsync(Guid attendanceId, Guid studentId)
+        public async Task UpdateStudentAttentAsync(Guid attendanceId)
         {
-            var attendance = await GetByAttendanceIdAsync(attendanceId);
-            
-            if (attendance == null)
-            {
+            var attendances = await GetByAttendanceIdAsync(attendanceId);
+            if (attendances == null)
                 throw new KeyNotFoundException("Attendance not found");
-            }
-
-            if (attendance.StudentId == studentId)
-            {
-                attendance.IsAttended = true;
-            }
-
-            // Lưu thay đổi vào database
-            await _context.SaveChangesAsync();
             
+            attendances.IsAttended = true;
+            // Tìm student cụ thể trong danh sách
+            await _context.SaveChangesAsync();            
         }
+
     }
 }
