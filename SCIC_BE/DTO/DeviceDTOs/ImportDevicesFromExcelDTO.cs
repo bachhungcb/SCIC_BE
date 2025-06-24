@@ -1,4 +1,6 @@
-﻿namespace SCIC_BE.DTO.DeviceDTOs
+﻿using Microsoft.AspNetCore.Http;
+
+namespace SCIC_BE.DTO.DeviceDTOs
 {
     public class ImportDevicesFromExcelDTO
     {

@@ -1,6 +1,12 @@
-﻿using SCIC_BE.Models;
+﻿using System;
+using System.Collections.Generic;
+using SCIC_BE.Models;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace SCIC_BE.Middlewares.Exceptions
 {

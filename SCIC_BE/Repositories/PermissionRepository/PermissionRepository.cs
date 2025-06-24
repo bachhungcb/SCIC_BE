@@ -1,8 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
 using SCIC_BE.DTO.PermissionDataRequestDTOs;
 using SCIC_BE.Models;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using SCIC_BE.DTO.UserDTOs;
 
 namespace SCIC_BE.Repositories.PermissionRepository

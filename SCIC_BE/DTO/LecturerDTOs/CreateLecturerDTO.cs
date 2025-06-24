@@ -1,4 +1,6 @@
-﻿namespace SCIC_BE.DTO.LecturerDTOs
+﻿using System;
+
+namespace SCIC_BE.DTO.LecturerDTOs
 {
     public class CreateLecturerDTO
     {

@@ -1,4 +1,6 @@
-﻿namespace SCIC_BE.Models
+﻿using System;
+
+namespace SCIC_BE.Models
 {
     public class DeviceModel
     {

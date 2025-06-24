@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Controllers.StudentControllers;
 using SCIC_BE.Data;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.UserRepository;
 using SCIC_BE.Repository.StudentRepository;
-using SCIC_BE.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -17,9 +17,18 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using SCIC_BE.Middlewares.Exceptions;
 using System.Text.Json;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using SCIC_BE.Hubs;
 using SCIC_BE.Repositories.LecturerRepository;
 using SCIC_BE.Repositories.PermissionRepository;
 using SCIC_BE.Repositories.AttendanceRepository;
+using SCIC_BE.Services.Server;
+using SCIC_BE.Services.Thingsboard;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -172,8 +181,15 @@ builder.Services.AddScoped<RcpService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<PasswordService>();
 
+builder.Services.AddSingleton<ThingsBoardAuthService>();
+builder.Services.AddHostedService<ThingsBoardTelemetryService>();
+
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
+
+app.MapHub<TelemetryHub>("/telemetryHub");
 
 using (var scope = app.Services.CreateScope())
 {

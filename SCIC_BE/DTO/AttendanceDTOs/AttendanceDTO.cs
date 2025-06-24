@@ -1,4 +1,6 @@
-﻿using SCIC_BE.DTO.LecturerDTOs;
+﻿using System;
+using System.Collections.Generic;
+using SCIC_BE.DTO.LecturerDTOs;
 using SCIC_BE.DTO.StudentDTOs;
 
 namespace SCIC_BE.DTO.AttendanceDTOs;

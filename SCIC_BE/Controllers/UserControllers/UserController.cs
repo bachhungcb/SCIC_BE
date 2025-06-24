@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
 using SCIC_BE.DTO.StudentDTOs;
@@ -6,7 +8,6 @@ using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.UserRepository;
-using SCIC_BE.Services;
 
 namespace SCIC_BE.Controllers.UserControllers
 {

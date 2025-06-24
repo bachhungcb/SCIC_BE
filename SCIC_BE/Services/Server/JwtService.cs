@@ -1,10 +1,13 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using SCIC_BE.Models;
+﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using SCIC_BE.Models;
 
-namespace SCIC_BE.Services
+namespace SCIC_BE.Services.Server
 {
     public class JwtService
     {

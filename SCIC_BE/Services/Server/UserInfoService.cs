@@ -1,11 +1,13 @@
-﻿using SCIC_BE.DTO.StudentDTOs;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.UserRepository;
-using SCIC_BE.Repository.StudentRepository;
 
-namespace SCIC_BE.Services
+namespace SCIC_BE.Services.Server
 {
     public class UserInfoService : IUserService
     {

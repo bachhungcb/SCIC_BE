@@ -1,4 +1,7 @@
-﻿using SCIC_BE.DTO.PermissionDataRequestDTOs;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SCIC_BE.DTO.PermissionDataRequestDTOs;
 using SCIC_BE.Models;
 
 namespace SCIC_BE.Repositories.PermissionRepository

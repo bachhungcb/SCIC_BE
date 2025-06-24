@@ -2,7 +2,7 @@
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 
-namespace SCIC_BE.Services
+namespace SCIC_BE.Services.Server
 {
     public class PasswordService : IPasswordService
     {

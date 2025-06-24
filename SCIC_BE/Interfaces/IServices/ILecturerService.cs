@@ -1,4 +1,7 @@
-﻿using SCIC_BE.DTO.LecturerDTOs;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SCIC_BE.DTO.LecturerDTOs;
 using SCIC_BE.DTO.StudentDTOs;
 
 namespace SCIC_BE.Interfaces.IServices

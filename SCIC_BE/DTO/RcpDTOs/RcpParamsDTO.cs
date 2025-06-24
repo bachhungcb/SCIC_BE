@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Interfaces.IDto;
 

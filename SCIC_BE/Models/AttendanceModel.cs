@@ -1,4 +1,5 @@
-﻿using SCIC_BE.DTO.StudentDTOs;
+﻿using System;
+using SCIC_BE.DTO.StudentDTOs;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SCIC_BE.Models

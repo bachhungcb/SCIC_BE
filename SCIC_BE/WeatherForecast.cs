@@ -1,3 +1,5 @@
+using System;
+
 namespace SCIC_BE
 {
     public class WeatherForecast

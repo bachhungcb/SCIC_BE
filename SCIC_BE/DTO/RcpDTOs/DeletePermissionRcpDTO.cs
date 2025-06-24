@@ -1,4 +1,5 @@
-﻿using SCIC_BE.Interfaces.IDto;
+﻿using System;
+using SCIC_BE.Interfaces.IDto;
 
 namespace SCIC_BE.DTO.RcpDTOs;
 

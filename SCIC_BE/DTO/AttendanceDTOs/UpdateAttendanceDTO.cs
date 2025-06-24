@@ -1,4 +1,7 @@
-﻿namespace SCIC_BE.DTO.AttendanceDTOs
+﻿using System;
+using System.Collections.Generic;
+
+namespace SCIC_BE.DTO.AttendanceDTOs
 {
     public class UpdateAttendanceDTO
     {

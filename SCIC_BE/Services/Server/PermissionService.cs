@@ -1,15 +1,17 @@
-﻿using SCIC_BE.DTO.PermissionDataRequestDTOs;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using SCIC_BE.DTO.PermissionDataRequestDTOs;
 using SCIC_BE.DTO.RcpDTOs;
+using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.PermissionRepository;
-using SCIC_BE.Repositories.UserRepository;
-using System.Runtime.InteropServices;
-using SCIC_BE.DTO.RoleDTOs;
-using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Repositories.RoleRepository;
+using SCIC_BE.Repositories.UserRepository;
 
-namespace SCIC_BE.Services
+namespace SCIC_BE.Services.Server
 {
     public class PermissionService : IPermissionService
     {

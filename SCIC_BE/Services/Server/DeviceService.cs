@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using OfficeOpenXml;
 using SCIC_BE.DTO.DeviceDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 
-namespace SCIC_BE.Services
+namespace SCIC_BE.Services.Server
 {
     public class DeviceService : IDeviceService
     {

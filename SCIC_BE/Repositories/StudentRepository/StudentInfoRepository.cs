@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
 using SCIC_BE.DTO.StudentDTOs;
@@ -6,6 +8,7 @@ using SCIC_BE.Models;
 using SCIC_BE.Repositories.UserRepository;
 using System.Data;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace SCIC_BE.Repository.StudentRepository
 {

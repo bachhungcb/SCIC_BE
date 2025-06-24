@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using SCIC_BE.DTO.UserDTOs;
 
 namespace SCIC_BE.DTO.PermissionDataRequestDTOs

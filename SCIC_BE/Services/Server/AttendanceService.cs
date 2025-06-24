@@ -1,4 +1,8 @@
-﻿using SCIC_BE.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using SCIC_BE.Data;
 using SCIC_BE.DTO.AttendanceDTOs;
 using SCIC_BE.DTO.RcpDTOs;
 using SCIC_BE.DTO.StudentDTOs;
@@ -6,7 +10,7 @@ using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.AttendanceRepository;
 
-namespace SCIC_BE.Services
+namespace SCIC_BE.Services.Server
 {
     public class AttendanceService : IAttendanceService
     {

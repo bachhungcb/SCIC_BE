@@ -1,4 +1,6 @@
-﻿namespace SCIC_BE.DTO.PermissionDataRequestDTOs
+﻿using Microsoft.AspNetCore.Http;
+
+namespace SCIC_BE.DTO.PermissionDataRequestDTOs
 {
     public class ImportPermissionsFromExcelRequest
     {

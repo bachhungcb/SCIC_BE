@@ -1,9 +1,13 @@
-﻿using SCIC_BE.DTO.RcpDTOs;
+﻿using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SCIC_BE.DTO.RcpDTOs;
 
-namespace SCIC_BE.Services
+namespace SCIC_BE.Services.Server
 {
     public class RcpService
     {

@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
 using SCIC_BE.Models;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace SCIC_BE.Repositories.UserRepository
 {

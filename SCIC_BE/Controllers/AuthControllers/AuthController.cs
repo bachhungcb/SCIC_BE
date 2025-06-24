@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SCIC_BE.DTO.AuthDTOs;
@@ -7,9 +10,9 @@ using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.RoleRepository;
 using SCIC_BE.Repositories.UserRepository;
-using SCIC_BE.Services;
 using System.Runtime.InteropServices;
-
+using System.Threading.Tasks;
+using SCIC_BE.Services.Server;
 
 
 namespace SCIC_BE.Controllers.AuthControllers

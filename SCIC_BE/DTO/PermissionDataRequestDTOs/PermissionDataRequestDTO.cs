@@ -1,4 +1,7 @@
-﻿namespace SCIC_BE.DTO.PermissionDataRequestDTOs
+﻿using System;
+using System.Collections.Generic;
+
+namespace SCIC_BE.DTO.PermissionDataRequestDTOs
 {
     public class PermissionDataRequestDTO
     {

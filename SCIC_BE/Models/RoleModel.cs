@@ -1,4 +1,6 @@
-﻿namespace SCIC_BE.Models
+﻿using System.Collections.Generic;
+
+namespace SCIC_BE.Models
 {
     public class RoleModel
     {

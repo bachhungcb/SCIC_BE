@@ -1,4 +1,6 @@
-﻿using SCIC_BE.DTO.StudentDTOs;
+﻿using System;
+using System.Collections.Generic;
+using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.Interfaces.IDto;
 
 namespace SCIC_BE.DTO.RcpDTOs;
