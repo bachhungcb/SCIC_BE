@@ -29,8 +29,8 @@ namespace SCIC_BE.Services.Server
                 FullName = user.FullName,
                 IdNumber = user.IdNumber,
                 Email = user.Email,
-                FaceImage = user.FaceImage,
-                FingerprintImage = user.FingerprintImage,
+                //FaceImage = user.FaceImage,
+                //FingerprintImage = user.FingerprintImage,
                 UserRoles = user.UserRoles?.Select(role => role.Role?.Name).Where(name => name != null).ToList()
             };
         }
@@ -77,7 +77,7 @@ namespace SCIC_BE.Services.Server
             {
                 return null;
             }
-            return userList.Select(user => ConvertToUserDTO(user)).ToList();
+            return userList.ToList();
         }
 
         public async Task DeleteUserAsync(Guid id)
@@ -109,9 +109,9 @@ namespace SCIC_BE.Services.Server
         {
             var userList = await _userRepository.GetAllUsersAsync();
             var userListWithoutRole = userList
-                                        .Where(user => user.UserRoles.Count == 1 & user.UserRoles.Any(role => role.RoleId == 4));
+                                        .Where(user => user.UserRoles.Count == 1 & user.UserRoles.Any(role => role.Equals("Default User")));
             
-            return userListWithoutRole.Select(user => ConvertToUserDTO(user)).ToList();
+            return userListWithoutRole.Select(user => user).ToList();
            
         }
     }

@@ -5,8 +5,8 @@ namespace SCIC_BE.Hubs;
 
 public class TelemetryHub: Hub
 {
-    public async Task SendTelemetry(string deiceId, string payload)
+    public async Task SendTelemetryToClients(string json)
     {
-        await Clients.All.SendAsync("ReceiveTelemetry", deiceId, payload);
+        await Clients.All.SendAsync("ReceiveTelemetry", json);
     }    
 }

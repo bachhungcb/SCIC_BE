@@ -4,8 +4,10 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SCIC_BE.Hubs;
 
 public class ThingsBoardWebSocketClient
 {
@@ -13,13 +15,14 @@ public class ThingsBoardWebSocketClient
     private readonly string _jwtToken;
     private readonly string _deviceId;
     private ClientWebSocket _webSocket;
-
-    public ThingsBoardWebSocketClient(string thingsboardWsUrl, string jwtToken, string deviceId)
+    private readonly IHubContext<TelemetryHub> _hubContext;
+    public ThingsBoardWebSocketClient(string thingsboardWsUrl, string jwtToken, string deviceId, IHubContext<TelemetryHub> hubContext)
     {
         _jwtToken = jwtToken;
         _thingsboardWsUrl = $"{thingsboardWsUrl.TrimEnd('/')}";
         _deviceId = deviceId;
         _webSocket = new ClientWebSocket();
+        _hubContext = hubContext;
     }
    
     public async Task ConnectAndSubscribeAsync()
@@ -124,7 +127,7 @@ public class ThingsBoardWebSocketClient
 
             Console.WriteLine("Received telemetry update:");
             Console.WriteLine(message);
-
+            await _hubContext.Clients.All.SendAsync("ReceiveTelemetry", message);
             // TODO: Xử lý dữ liệu telemetry ở đây
             try
             {

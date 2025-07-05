@@ -203,6 +203,7 @@ namespace SCIC_BE.Controllers.AdminControllers
 
 
         [HttpGet("list-user")]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetAllUser()
         {
             var userList = await _userInfoService.GetListUserAsync();

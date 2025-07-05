@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using SCIC_BE.Hubs;
 
 namespace SCIC_BE.Services.Thingsboard;
 
@@ -11,11 +13,13 @@ public class ThingsBoardTelemetryService : IHostedService
     private readonly IConfiguration _configuration;
     private ThingsBoardWebSocketClient _tbClient;
     private ThingsBoardAuthService _tbAuthService;
+    private readonly IHubContext<TelemetryHub> _hubContext;
 
-    public ThingsBoardTelemetryService(IConfiguration configuration,  ThingsBoardAuthService tbAuthService)
+    public ThingsBoardTelemetryService(IConfiguration configuration,  ThingsBoardAuthService tbAuthService, IHubContext<TelemetryHub> hubContext)
     {
         _configuration = configuration;
         _tbAuthService = tbAuthService;
+        _hubContext = hubContext;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -29,7 +33,7 @@ public class ThingsBoardTelemetryService : IHostedService
             var token = await _tbAuthService.LoginToThinkBoard();
             Console.WriteLine($"Token received: {token.Substring(0, 10)}...");
 
-            _tbClient = new ThingsBoardWebSocketClient(tbHost, token, deviceId);
+            _tbClient = new ThingsBoardWebSocketClient(tbHost, token, deviceId, _hubContext);
             await _tbClient.ConnectAndSubscribeAsync();
 
             Console.WriteLine("Connected and subscribed to ThingsBoard WebSocket.");

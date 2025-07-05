@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
 using SCIC_BE.Models;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using SCIC_BE.DTO.UserDTOs;
 
 namespace SCIC_BE.Repositories.UserRepository
 {
@@ -41,22 +43,32 @@ namespace SCIC_BE.Repositories.UserRepository
             await _context.SaveChangesAsync();  // Lưu thay đổi vào cơ sở dữ liệu
         }
 
-        public async Task<List<UserModel>> GetAllUsersAsync()
+        public async Task<List<UserDTO>> GetAllUsersAsync()
         {
-            var users = await _context.Users
-                        .Include(u => u.StudentInfo)
-                        .Include(u => u.UserRoles)
-                        .ThenInclude(ur => ur.Role)
-                        .Include(u => u.LecturerInfo)
-                        .ToListAsync();
+            int page = 1; int pageSize = 20;
+            var skip = (page - 1) * pageSize;
 
+            var userList = await _context.Users
+                .OrderBy(u => u.Id)
+                .Skip(skip)
+                .Take(pageSize)
+                .Select(u => new UserDTO
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    FullName = u.FullName,
+                    IdNumber = u.IdNumber,
+                    Email = u.Email,
 
-            if (users == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+                    //KHÔNG lấy ảnh ở đây để giảm tải JSON
+                    FaceImage = null,
+                    FingerprintImage = null,
 
-            return users;
+                    UserRoles = u.UserRoles.Select(ur => ur.Role.Name).ToList()
+                })
+                .ToListAsync();
+
+            return userList;
         }
 
         public async Task<UserModel> GetUserByEmailAsync(string email)
