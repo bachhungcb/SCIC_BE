@@ -65,7 +65,7 @@ namespace SCIC_BE.Services.Server
                 throw new Exception("User not found");
             }
 
-            return ConvertToUserDTO(user);
+            return user;
         }
 
 
@@ -92,7 +92,7 @@ namespace SCIC_BE.Services.Server
 
         public async Task UpdateUserAsync(Guid id, UpdateUserDTO dto)
         {
-            var userInfo = await _userRepository.GetUserByIdAsync(id);
+            var userInfo = await _userRepository.GetUserEntityByIdAsync(id);
 
             if (userInfo == null)
             {
@@ -101,7 +101,7 @@ namespace SCIC_BE.Services.Server
 
             userInfo.UserName = dto.Name;
             userInfo.Email = dto.Email;
-
+            
             await _userRepository.UpdateUserAsync(userInfo);
         }
 

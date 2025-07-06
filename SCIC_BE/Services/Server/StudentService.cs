@@ -60,7 +60,7 @@ namespace SCIC_BE.Services.Server
                 throw new Exception("Role 'Student' not found");
             }
 
-            var hasRole = user.UserRoles?.Any(ur => ur.RoleId == studentRole.Id) == true;
+            var hasRole = user.UserRoles?.Any(ur => ur.Equals("Student")) == true;
             if (!hasRole)
             {
                 var userRole = new UserRoleModel
@@ -98,7 +98,7 @@ namespace SCIC_BE.Services.Server
 
         public async Task CreateStudentInfoAsync(Guid userId, string studentCode, DateTime enrollDate)
         {
-            var user = await _userRepository.GetUserByIdAsync(userId);
+            var user = await _userRepository.GetUserEntityByIdAsync(userId);
 
             var studentInfo = new StudentModel
             {
@@ -129,7 +129,7 @@ namespace SCIC_BE.Services.Server
 
             if (studentInfo == null)
                 throw new Exception("Student info not found");
-            var user = await _userRepository.GetUserByIdAsync(userId);
+            var user = await _userRepository.GetUserEntityByIdAsync(userId);
 
             var userRoles = user.UserRoles.ToList();
             foreach(var userRole in userRoles)

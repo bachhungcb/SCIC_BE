@@ -127,7 +127,7 @@ namespace SCIC_BE.Controllers.AuthControllers
         {
             try
             {
-                var user = await _userRepository.GetUserByIdAsync(id);
+                var user = await _userRepository.GetUserEntityByIdAsync(id);
 
                 if (user == null)
                     return BadRequest(new { message = "User not found" });

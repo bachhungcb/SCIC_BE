@@ -19,19 +19,25 @@ namespace SCIC_BE.Repositories.UserRepository
             _context = context;
         }
 
-        public async Task<UserModel> GetUserByIdAsync(Guid id)
+        public async Task<UserDTO> GetUserByIdAsync(Guid id)
         {
             var user = await _context.Users
-                        .Include(u => u.StudentInfo)
-                        .Include(u => u.UserRoles)
-                        .ThenInclude(ur => ur.Role)
-                        .Include(u => u.LecturerInfo)
-                        .FirstOrDefaultAsync(u => u.Id == id);
+                .Where(u => u.Id == id)
+                .Select(u => new UserDTO
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    FullName = u.FullName,
+                    IdNumber = u.IdNumber,
+                    Email = u.Email,
+                    FaceImage = null, // u.FaceImage,
+                    FingerprintImage = null, // u.FingerprintImage,
+                    UserRoles = u.UserRoles.Select(ur => ur.Role.Name).ToList()
+                })
+                .FirstOrDefaultAsync();
 
             if (user == null)
-            {
                 throw new KeyNotFoundException("User not found");
-            }
 
             return user;
         }
@@ -42,7 +48,17 @@ namespace SCIC_BE.Repositories.UserRepository
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();  // Lưu thay đổi vào cơ sở dữ liệu
         }
+        
+        public async Task<UserModel> GetUserEntityByIdAsync(Guid id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null)
+                throw new KeyNotFoundException("User not found");
 
+            return user;
+        }
+
+        
         public async Task<List<UserDTO>> GetAllUsersAsync()
         {
             int page = 1; int pageSize = 20;

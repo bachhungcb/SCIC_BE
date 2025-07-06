@@ -78,7 +78,7 @@ namespace SCIC_BE.Services.Server
                 if (user == null)
                     throw new Exception($"User with ID {userId} not found.");
 
-                rpcUserDtOs.Add(ConvertToUserDTO(user));
+                rpcUserDtOs.Add(user);
 
                 permissionUsers.Add(new PermissionUser
                 {
@@ -139,7 +139,7 @@ namespace SCIC_BE.Services.Server
                 if (user == null)
                     throw new Exception($"User with ID {userId} not found.");
 
-                rpcUserDTOs.Add(ConvertToUserDTO(user));
+                rpcUserDTOs.Add(user);
 
                 permissionUsers.Add(new PermissionUser
                 {

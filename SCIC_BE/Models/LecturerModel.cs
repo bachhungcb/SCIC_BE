@@ -12,6 +12,6 @@ namespace SCIC_BE.Models
         public DateTime HireDate { get; set; }
 
         //Navigation
-        public UserModel User { get; set; }
+        public UserModel? User { get; set; }
     }
 }

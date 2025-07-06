@@ -86,7 +86,7 @@ namespace SCIC_BE.Services.Server
                 throw new Exception("Role 'Lecturer' not found");
             }
 
-            var hasRole = user.UserRoles?.Any(ur => ur.RoleId == lecturerRole.Id) == true;
+            var hasRole = user.UserRoles?.Any(ur => ur.Equals(lecturerRole)) == true;
             if (!hasRole)
             {
                 var userRole = new UserRoleModel
@@ -109,7 +109,7 @@ namespace SCIC_BE.Services.Server
 
         public async Task CreateLecturerInfoAsync(Guid userId, string lecturerCode, DateTime hireDate)
         {
-            var user = await _userRepository.GetUserByIdAsync(userId);
+            var user = await _userRepository.GetUserEntityByIdAsync(userId);
 
             var lecturerInfo = new LecturerModel
             {
@@ -134,7 +134,7 @@ namespace SCIC_BE.Services.Server
             var userRoles = user.UserRoles.ToList();
             foreach (var userRole in userRoles)
             {
-                await _userRoleRepository.RemoveAsync(userRole);
+                //await _userRoleRepository.RemoveAsync(userRole);
             }
             await _userRepository.DeleteUserAsync(userId);
         }

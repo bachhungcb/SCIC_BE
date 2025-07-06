@@ -9,7 +9,8 @@ namespace SCIC_BE.Repositories.UserRepository
     public interface IUserRepository
     {
         Task AddUserAsync(UserModel user);
-        Task<UserModel> GetUserByIdAsync(Guid id);
+        Task<UserDTO> GetUserByIdAsync(Guid id);
+        Task<UserModel> GetUserEntityByIdAsync(Guid id);
         Task<List<UserDTO>> GetAllUsersAsync();
         Task<UserModel> GetUserByEmailAsync(string email);
         Task UpdateUserAsync(UserModel user);
