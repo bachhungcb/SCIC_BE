@@ -30,8 +30,8 @@ namespace SCIC_BE.Repositories.UserRepository
                     FullName = u.FullName,
                     IdNumber = u.IdNumber,
                     Email = u.Email,
-                    FaceImage = null, // u.FaceImage,
-                    FingerprintImage = null, // u.FingerprintImage,
+                    FaceImage = u.FaceImage, // ,null
+                    FingerprintImage = u.FingerprintImage, //null,
                     UserRoles = u.UserRoles.Select(ur => ur.Role.Name).ToList()
                 })
                 .FirstOrDefaultAsync();
