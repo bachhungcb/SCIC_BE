@@ -84,7 +84,7 @@ namespace SCIC_BE.Controllers.AuthControllers
             var userRole = new UserRoleModel
             {
                 UserId = user.Id,
-                RoleId = defaultRole.Id
+                RoleId = 4 //Default User is 4
             };
 
             await _userRoleRepository.AddAsync(userRole);
