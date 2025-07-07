@@ -142,7 +142,7 @@ builder.Services.AddDbContext<ScicDbContext>(options =>
                                                             sqlOption =>
                                                             {
                                                                 sqlOption.CommandTimeout(60);
-                                                            }).LogTo(Console.WriteLine));
+                                                            }));
 
 builder.Services.AddControllers(options =>
 {

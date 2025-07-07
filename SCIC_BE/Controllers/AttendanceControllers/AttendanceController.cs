@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SCIC_BE.DTO.AttendanceDTOs;
@@ -18,6 +19,7 @@ namespace SCIC_BE.Controllers.AttendanceControllers
         }
 
         [HttpGet("list-attendance")]
+        [SuppressMessage("ReSharper.DPA", "DPA0000: DPA issues")]
         public async Task<IActionResult> GetAllAttendanceSchedule()
         {
             try
