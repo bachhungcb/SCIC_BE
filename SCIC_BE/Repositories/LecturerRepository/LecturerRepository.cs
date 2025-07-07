@@ -49,8 +49,8 @@ namespace SCIC_BE.Repositories.LecturerRepository
                     // Thông tin từ bảng User
                     UserName = l.User!.UserName,
                     Email = l.User.Email,
-                    FaceImage = null, //l.User.FaceImage
-                    FingerprintImage = null, // l.User.FingerprintImage,
+                    FaceImage = l.User.FaceImage, //null
+                    //FingerprintImage = null, // l.User.FingerprintImage,
                 })
                 .FirstOrDefaultAsync();
             

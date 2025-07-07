@@ -38,6 +38,7 @@ namespace SCIC_BE.Services.Server
                 UserName = student.User.UserName,
                 Email = student.User.Email,
                 StudentCode = student.StudentCode,
+                FaceImage = student.User.FaceImage,
                 EnrollDate = student.EnrollDate,
             };
             return studentDTO;
