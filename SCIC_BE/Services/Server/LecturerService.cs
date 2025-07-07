@@ -55,8 +55,8 @@ namespace SCIC_BE.Services.Server
             var lecturerDTO = new LecturerDTO
             {
                 UserId = lecturer.UserId,
-                UserName = lecturer.User.UserName,
-                Email = lecturer.User.Email,
+                UserName = lecturer.UserName,
+                Email = lecturer.Email,
                 LecturerCode = lecturer.LecturerCode,
                 HireDate = lecturer.HireDate
             };
@@ -141,7 +141,7 @@ namespace SCIC_BE.Services.Server
 
         public async Task UpdateLecturerInfoAsync(Guid userId, string lecturerCode)
         {
-            var lecturerInfo = await _lecturerRepository.GetLecturerByIdAsync(userId);
+            var lecturerInfo = await _lecturerRepository.GetLecturerEntityByIdAsync(userId);
 
             if(lecturerInfo == null)
             {

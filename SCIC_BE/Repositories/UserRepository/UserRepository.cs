@@ -36,8 +36,8 @@ namespace SCIC_BE.Repositories.UserRepository
                 })
                 .FirstOrDefaultAsync();
 
-            if (user == null)
-                throw new KeyNotFoundException("User not found");
+            // if (user == null)
+            //     throw new KeyNotFoundException("User not found");
 
             return user;
         }
@@ -52,8 +52,8 @@ namespace SCIC_BE.Repositories.UserRepository
         public async Task<UserModel> GetUserEntityByIdAsync(Guid id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-                throw new KeyNotFoundException("User not found");
+            // if (user == null)
+            //     throw new KeyNotFoundException("User not found");
 
             return user;
         }

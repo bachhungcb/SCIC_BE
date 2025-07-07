@@ -136,9 +136,13 @@ builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
 
 }));
 
-builder.Services.AddDbContext<ScicDbContext>(options => options.UseSqlServer(builder.
-                                                                                Configuration.
-                                                                                GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ScicDbContext>(options => 
+                                                    options.UseSqlServer(
+                                                            builder.Configuration.GetConnectionString("DefaultConnection"),
+                                                            sqlOption =>
+                                                            {
+                                                                sqlOption.CommandTimeout(60);
+                                                            }).LogTo(Console.WriteLine));
 
 builder.Services.AddControllers(options =>
 {
