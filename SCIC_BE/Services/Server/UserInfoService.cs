@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SCIC_BE.DTO.RoleDTOs;
 using SCIC_BE.DTO.UserDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
+using SCIC_BE.Repositories.RoleRepository;
 using SCIC_BE.Repositories.UserRepository;
 
 namespace SCIC_BE.Services.Server
@@ -13,11 +15,18 @@ namespace SCIC_BE.Services.Server
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordService _passwordService;
+        private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IRoleRepository _roleRepository;
+
         public UserInfoService(IUserRepository userRepository,
-                                IPasswordService passwordService)
+                                IPasswordService passwordService,
+                                IUserRoleRepository userRoleRepository,
+                                IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
+            _userRoleRepository = userRoleRepository;
+            _roleRepository = roleRepository;
         }
 
         private UserDTO ConvertToUserDTO(UserModel user)
@@ -50,8 +59,28 @@ namespace SCIC_BE.Services.Server
                 PasswordHash = _passwordService.HashPassword(null, dto.Password)
 
             };
-
+        
             await _userRepository.AddUserAsync(user);
+            
+            var defaultRole = await _roleRepository.GetRoleByNameAsync("Default User");
+
+            if (defaultRole == null)
+            {
+                defaultRole = new RoleDTO
+                {
+                    Id = 4,
+                    Name = "Default User"
+                };
+                await _roleRepository.AddRoleAsync(defaultRole);
+            }
+
+            var userRole = new UserRoleModel
+            {
+                UserId = user.Id,
+                RoleId = 4 //Default User is 4
+            };
+
+            await _userRoleRepository.AddAsync(userRole);
 
         }
 
@@ -89,6 +118,7 @@ namespace SCIC_BE.Services.Server
             }
             await _userRepository.DeleteUserAsync(id);
         }
+        
 
         public async Task UpdateUserAsync(Guid id, UpdateUserDTO dto)
         {
