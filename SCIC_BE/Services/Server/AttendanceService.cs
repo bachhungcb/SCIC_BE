@@ -17,21 +17,21 @@ namespace SCIC_BE.Services.Server
         private readonly IAttendanceRepository _attendanceRepository;
         private readonly IStudentService _studentService;
         private readonly ILecturerService _lecturerService;
+        private readonly IAttendanceLogService _attendanceLogService;
         private readonly RcpService _rcpService;
-        private readonly ScicDbContext _context;
 
         public AttendanceService(
             IAttendanceRepository attendanceRepository,
             IStudentService studentService,
             ILecturerService lecturerService,
-            RcpService rcpService,
-            ScicDbContext context)
+            IAttendanceLogService attendanceLogService,
+            RcpService rcpService)
         {
             _attendanceRepository = attendanceRepository;
             _studentService = studentService;
             _lecturerService = lecturerService;
+            _attendanceLogService = attendanceLogService;
             _rcpService = rcpService;
-            _context = context;
         }
 
         public async Task<List<AttendanceDTO>> GetListAttendanceAsync()
@@ -132,7 +132,7 @@ namespace SCIC_BE.Services.Server
 
             // Lọc theo deviceId và chỉ lấy buổi có ngày là hôm nay
             var todayAttendances = attendances
-                .Where(a => a.DeviceId == deviceId && a.TimeStart.Date == today)
+                .Where(a => a.DeviceId == deviceId && a.TimeStart.Date <= today && a.TimeEnd.Date >= today)
                 .ToList();
 
             if (!todayAttendances.Any())
@@ -228,6 +228,7 @@ namespace SCIC_BE.Services.Server
                 
                 
                 await _attendanceRepository.UpdateAsync(existingAttendance);
+                
                 updatedAttendances.Add(existingAttendance);
             }
             var updateAttendanceRcp = new UpdateAttendanceRcpDto()
@@ -268,7 +269,7 @@ namespace SCIC_BE.Services.Server
         public async  Task UpdateStudentAttendancAsync(Guid deviceId, Guid studentId)
         {
             var attendancesToday = await GetAttendancesByDeviceIdTodayAsync(deviceId);
-            var currentTime = DateTime.Now;
+            var currentTime = DateTime.UtcNow;
 
             // Lọc buổi đang diễn ra (trong khoảng giờ điểm danh)
             var validAttendance = attendancesToday.FirstOrDefault(a =>
@@ -283,7 +284,7 @@ namespace SCIC_BE.Services.Server
             if (targetStudent == null)
                 throw new Exception("Student not found in attendance list.");
             
-
+            await _attendanceLogService.AddAttendanceLogAsync(studentId);
             await _attendanceRepository.UpdateStudentAttentAsync(validAttendance.Id);
         }
 

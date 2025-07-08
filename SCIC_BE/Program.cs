@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SCIC_BE.Hubs;
+using SCIC_BE.Repositories.AttendanceLogRepository;
 using SCIC_BE.Repositories.LecturerRepository;
 using SCIC_BE.Repositories.PermissionRepository;
 using SCIC_BE.Repositories.AttendanceRepository;
@@ -180,6 +181,9 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+
+builder.Services.AddScoped<IAttendanceLogRepository, AttendanceLogRepository>();
+builder.Services.AddScoped<IAttendanceLogService, AttendanceLogService>();
 
 builder.Services.AddScoped<RcpService>();
 builder.Services.AddScoped<JwtService>();

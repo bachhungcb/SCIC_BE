@@ -20,6 +20,7 @@ namespace SCIC_BE.Data
         public DbSet<DeviceModel> Devices { get; set; }
         public DbSet<PermissionModel> Permissions { get; set; }
         public DbSet<AttendanceModel> Attendances { get; set; }
+        public DbSet<AttendanceLogModel> AttendanceLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
