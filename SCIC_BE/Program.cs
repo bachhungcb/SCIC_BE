@@ -197,7 +197,7 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-app.MapHub<TelemetryHub>("/telemetryHub");
+app.MapHub<TelemetryHub>("/api/ws/telemetryHub");
 
 using (var scope = app.Services.CreateScope())
 {
