@@ -43,10 +43,53 @@ namespace SCIC_BE.Services.Server
                 UserRoles = user.UserRoles?.Select(role => role.Role?.Name).Where(name => name != null).ToList()
             };
         }
+        public async Task<UserDTO> GetUserAsync(Guid id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
 
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            return user;
+        }
+
+
+        public async Task<List<UserDTO>> GetListUserAsync()
+        {
+            var userList = await _userRepository.GetAllUsersAsync();
+
+            if (userList == null)
+            {
+                return null;
+            }
+            return userList.ToList();
+        }
+        public async Task<bool> GetUserByIdNumber(string IdNumber)
+        {
+            var userList = await GetListUserAsync();
+
+            foreach (var user in userList)
+            {
+                if (user.IdNumber.Equals(IdNumber))
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
 
         public async Task CreateUserAsync(CreateUserDTO dto)
         {
+            var existingIdNumber = await GetUserByIdNumber(dto.IdNumber);
+            
+            if (existingIdNumber == false)
+            {
+                throw new Exception("User already exists with given Id number");
+            }
+            
             var user = new UserModel
             {
                 Id = Guid.NewGuid(),
@@ -85,29 +128,7 @@ namespace SCIC_BE.Services.Server
         }
 
 
-        public async Task<UserDTO> GetUserAsync(Guid id)
-        {
-            var user = await _userRepository.GetUserByIdAsync(id);
 
-            if (user == null)
-            {
-                throw new Exception("User not found");
-            }
-
-            return user;
-        }
-
-
-        public async Task<List<UserDTO>> GetListUserAsync()
-        {
-            var userList = await _userRepository.GetAllUsersAsync();
-
-            if (userList == null)
-            {
-                return null;
-            }
-            return userList.ToList();
-        }
 
         public async Task DeleteUserAsync(Guid id)
         {

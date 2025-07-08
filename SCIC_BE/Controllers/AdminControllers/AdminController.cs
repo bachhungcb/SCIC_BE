@@ -198,7 +198,7 @@ namespace SCIC_BE.Controllers.AdminControllers
         {
             await _userInfoService.CreateUserAsync(dto);
 
-            return Ok();
+            return Ok(new { message = "User created successfully" });
         }
 
 
