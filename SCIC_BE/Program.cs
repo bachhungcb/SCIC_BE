@@ -129,13 +129,17 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(securityRequirement);
 });
 
-builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+builder.Services.AddCors(options =>
 {
-    builder.WithOrigins("*")
-           .AllowAnyMethod()
-           .AllowAnyHeader();
-
-}));
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .SetIsOriginAllowed(_ => true)
+            .AllowCredentials();
+    });
+});
 
 builder.Services.AddDbContext<ScicDbContext>(options => 
                                                     options.UseSqlServer(
@@ -197,7 +201,7 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-app.MapHub<TelemetryHub>("/api/ws/telemetryHub");
+
 
 using (var scope = app.Services.CreateScope())
 {
@@ -221,7 +225,7 @@ app.UseAuthorization();
 
 
 app.MapControllers();
-
+app.MapHub<TelemetryHub>("/api/ws/telemetryHub");
 
 app.Lifetime.ApplicationStarted.Register(() =>
 {
