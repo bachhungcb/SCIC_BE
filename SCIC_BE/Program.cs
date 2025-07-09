@@ -145,7 +145,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
 {
-    builder.WithOrigins("*")
+    builder
+        //.WithOrigins("*")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .SetIsOriginAllowed(_ => true)
