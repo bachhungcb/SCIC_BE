@@ -8,6 +8,7 @@ public class AttendanceLogModel
     
     public Guid UserId { get; set; }
     
+    public Guid DeviceId { get; set; }
     public string Status {get; set;}
     
     public DateTime CreatedOn { get; set; }

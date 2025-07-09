@@ -266,7 +266,7 @@ namespace SCIC_BE.Services.Server
             await _attendanceRepository.DeleteAsync(attendanceid);
         }
 
-        public async  Task UpdateStudentAttendancAsync(Guid deviceId, Guid studentId)
+        public async  Task UpdateStudentAttendancAsync(Guid deviceId, Guid studentId, string status)
         {
             var attendancesToday = await GetAttendancesByDeviceIdTodayAsync(deviceId);
             var currentTime = DateTime.UtcNow;
@@ -284,7 +284,7 @@ namespace SCIC_BE.Services.Server
             if (targetStudent == null)
                 throw new Exception("Student not found in attendance list.");
             
-            await _attendanceLogService.AddAttendanceLogAsync(studentId);
+            await _attendanceLogService.AddAttendanceLogAsync(studentId, deviceId, status);
             await _attendanceRepository.UpdateStudentAttentAsync(validAttendance.Id);
         }
 

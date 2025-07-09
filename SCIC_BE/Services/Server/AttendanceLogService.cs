@@ -16,13 +16,14 @@ public class AttendanceLogService : IAttendanceLogService
         _attendanceLogRepositoryrepository = attendanceLogRepository;
     }
     
-    public async Task AddAttendanceLogAsync(Guid userId)
+    public async Task AddAttendanceLogAsync(Guid userId, Guid deviceId, string status)
     {
         var attendanceLog = new AttendanceLogModel
         {
             Id = Guid.NewGuid(),
             UserId = userId,
-            Status = "Check in",
+            DeviceId = deviceId,
+            Status = status,
             CreatedOn = DateTime.Now,
         };
         

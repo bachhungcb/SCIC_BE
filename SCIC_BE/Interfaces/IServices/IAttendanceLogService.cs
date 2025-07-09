@@ -7,7 +7,7 @@ namespace SCIC_BE.Interfaces.IServices;
 
 public interface IAttendanceLogService
 {
-    Task AddAttendanceLogAsync(Guid userId);
+    Task AddAttendanceLogAsync(Guid userId, Guid deviceId, string status);
     Task<List<AttendanceLogModel>> GetAllAttendanceAsync();
     Task<AttendanceLogModel> GetAttendanceByIdAsync(Guid id);
 }
