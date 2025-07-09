@@ -129,18 +129,29 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(securityRequirement);
 });
 
-builder.Services.AddCors(options =>
+// builder.Services.AddCors(options =>
+// {
+//     options.AddDefaultPolicy(policy =>
+//     {
+//         policy
+//             .WithOrigins("*")
+//             .AllowAnyHeader()
+//             .AllowAnyMethod()
+//             .SetIsOriginAllowed(_ => true)
+//             .AllowCredentials();
+//     });
+// });
+
+
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy
-            .WithOrigins("*")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .SetIsOriginAllowed(_ => true)
-            .AllowCredentials();
-    });
-});
+    builder.WithOrigins("*")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .SetIsOriginAllowed(_ => true)
+        .AllowCredentials();;
+
+}));
 
 builder.Services.AddDbContext<ScicDbContext>(options => 
                                                     options.UseSqlServer(
