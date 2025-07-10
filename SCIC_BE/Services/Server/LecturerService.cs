@@ -58,11 +58,10 @@ namespace SCIC_BE.Services.Server
                 UserName = lecturer.UserName,
                 Email = lecturer.Email,
                 LecturerCode = lecturer.LecturerCode,
-                
                 HireDate = lecturer.HireDate
             };
 
-            return lecturer;
+            return lecturerDTO;
         }
 
         public async Task CreateLecturerAsync(Guid id, CreateLecturerDTO dto)
