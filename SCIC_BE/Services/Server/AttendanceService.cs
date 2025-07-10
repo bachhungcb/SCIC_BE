@@ -269,7 +269,7 @@ namespace SCIC_BE.Services.Server
         public async  Task UpdateStudentAttendancAsync(Guid deviceId, Guid studentId, string status)
         {
             var attendancesToday = await GetAttendancesByDeviceIdTodayAsync(deviceId);
-            var currentTime = DateTime.UtcNow;
+            var currentTime = DateTime.Now;
 
             // Lọc buổi đang diễn ra (trong khoảng giờ điểm danh)
             var validAttendance = attendancesToday.FirstOrDefault(a =>
