@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SCIC_BE.Data;
+﻿using SCIC_BE.Data;
 using SCIC_BE.DTO.AttendanceDTOs;
+using SCIC_BE.DTO.LecturerDTOs;
 using SCIC_BE.DTO.RcpDTOs;
 using SCIC_BE.DTO.StudentDTOs;
 using SCIC_BE.Interfaces.IServices;
 using SCIC_BE.Models;
 using SCIC_BE.Repositories.AttendanceRepository;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SCIC_BE.Services.Server
 {
@@ -41,7 +42,7 @@ namespace SCIC_BE.Services.Server
             if (attendances == null || !attendances.Any())
                 throw new Exception("Attendances not found");
 
-            // Group theo các trường đặc trưng của 1 buổi điểm danh
+            // Group theo 1 buổi điểm danh (lecturer, device, time)
             var grouped = attendances.GroupBy(a => new
             {
                 a.LecturerId,
@@ -59,15 +60,18 @@ namespace SCIC_BE.Services.Server
 
                 foreach (var record in group)
                 {
-                    var student = await _studentService.GetStudentByIdAsync(record.StudentId);
-                    if (student == null)
-                        throw new Exception("Student not found");
-
-                    studentDtos.Add(new AttendanceStudentDTO
+                    foreach (var s in record.Students) // lấy từ JSON
                     {
-                        Student = student,
-                        IsAttended = record.IsAttended
-                    });
+                        var student = await _studentService.GetStudentByIdAsync(s.StudentId);
+                        if (student == null)
+                            throw new Exception("Student not found");
+
+                        studentDtos.Add(new AttendanceStudentDTO
+                        {
+                            Student = student,
+                            IsAttended = s.IsAttended
+                        });
+                    }
                 }
 
                 // Loại bỏ sinh viên trùng
@@ -80,7 +84,7 @@ namespace SCIC_BE.Services.Server
                 {
                     Id = group.First().Id,
                     Lecturer = lecturer,
-                    Student = studentDtos,
+                    Students = studentDtos,
                     DeviceId = group.Key.DeviceId,
                     TimeStart = group.Key.TimeStart,
                     TimeEnd = group.Key.TimeEnd,
@@ -91,15 +95,17 @@ namespace SCIC_BE.Services.Server
             return result;
         }
 
+
+
         public async Task<AttendanceDTO> GetAttendanceByIdAsync(Guid id)
         {
             var attendances = await GetListAttendanceAsync();
-            
-            
+
+
             var attendance = attendances.FirstOrDefault(a => a.Id == id);
             if (attendance == null)
                 throw new Exception("Attendance not found");
-            
+
             return attendance;
         }
 
@@ -107,7 +113,7 @@ namespace SCIC_BE.Services.Server
         {
             var attendances = await GetListAttendanceAsync();
             var attendance = attendances.FirstOrDefault(a => a.DeviceId == deviceId);
-            
+
             if (attendance == null)
                 throw new Exception("Attendance not found");
             return attendance;
@@ -116,14 +122,10 @@ namespace SCIC_BE.Services.Server
         public async Task<AttendanceDTO> GetAttendanceByStudentIdAsync(Guid studentId)
         {
             var attendances = await GetListAttendanceAsync();
-            var attendance = attendances.FirstOrDefault(a => a.Student.Any(s => s.Student.UserId == studentId));
-
-            if (attendance == null)
-                throw new Exception("Attendance not found");
-
+            var attendance = attendances.FirstOrDefault(a => a.Students.Any(s => s.Student.UserId == studentId)) ?? throw new Exception("Attendance not found");
             return attendance;
         }
-        
+
         public async Task<List<AttendanceDTO>> GetAttendancesByDeviceIdTodayAsync(Guid deviceId)
         {
             var attendances = await GetListAttendanceAsync();
@@ -147,6 +149,9 @@ namespace SCIC_BE.Services.Server
             var attendanceStudents = new List<AttendanceStudentDTO>();
             var lecturerId = attendanceInfo.LecturerId;
             var deviceId = attendanceInfo.DeviceId;
+
+            // Chuẩn bị danh sách sinh viên chi tiết
+            var studentList = new List<AttendanceStudent>();
             foreach (var studentId in attendanceInfo.StudentIds)
             {
                 var student = await _studentService.GetStudentByIdAsync(studentId)
@@ -158,19 +163,26 @@ namespace SCIC_BE.Services.Server
                     IsAttended = false
                 });
 
-                var attendance = new AttendanceModel
+                studentList.Add(new AttendanceStudent
                 {
-                    Id = Guid.NewGuid(),
-                    LecturerId = lecturerId,
                     StudentId = studentId,
-                    DeviceId = deviceId,
-                    TimeStart = attendanceInfo.TimeStart,
-                    TimeEnd = attendanceInfo.TimeEnd,
-                    CreatedAt = DateTime.Now
-                };
-
-                await _attendanceRepository.AddAsync(attendance);
+                    IsAttended = false
+                });
             }
+
+            // Tạo 1 Attendance duy nhất
+            var attendance = new AttendanceModel
+            {
+                Id = Guid.NewGuid(),
+                LecturerId = lecturerId,
+                DeviceId = deviceId,
+                TimeStart = attendanceInfo.TimeStart,
+                TimeEnd = attendanceInfo.TimeEnd,
+                CreatedAt = DateTime.UtcNow,
+                Students = studentList // sẽ serialize thành AttendanceData
+            };
+
+            await _attendanceRepository.AddAsync(attendance);
 
             var createAttendanceRcp = new CreateAttendanceRCPDto
             {
@@ -202,39 +214,48 @@ namespace SCIC_BE.Services.Server
             return createAttendanceRcp;
         }
 
-        public async Task<List<AttendanceModel>> UpdateAttendanceAsync(Guid attendanceId, UpdateAttendanceDTO updateInfo)
+        public async Task<AttendanceModel> UpdateAttendanceAsync(Guid attendanceId, UpdateAttendanceDTO updateInfo)
         {
-            var updatedAttendances = new List<AttendanceModel>();
-            var attendanceStudents = new List<AttendanceStudentDTO>();
+            var existingAttendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceId)
+                ?? throw new Exception("Attendance not found");
+
+            // Cập nhật thông tin buổi điểm danh
+            existingAttendance.DeviceId = updateInfo.DeviceId;
+            existingAttendance.LecturerId = updateInfo.LecturerId;
+
+            var updatedStudents = new List<AttendanceStudent>();
+            var attendanceStudentsDto = new List<AttendanceStudentDTO>();
 
             foreach (var studentId in updateInfo.StudentIds)
             {
-                var existingAttendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceId)
-                    ?? throw new Exception("Attendance not found");
-                
                 var student = await _studentService.GetStudentByIdAsync(studentId)
                               ?? throw new Exception($"Student with id {studentId} not found");
 
-                attendanceStudents.Add(new AttendanceStudentDTO
+                // Thêm vào list JSON
+                updatedStudents.Add(new AttendanceStudent
+                {
+                    StudentId = studentId,
+                    IsAttended = false
+                });
+
+                // Thêm vào DTO để trả ra
+                attendanceStudentsDto.Add(new AttendanceStudentDTO
                 {
                     Student = student,
                     IsAttended = false
                 });
-
-                
-                existingAttendance.DeviceId = updateInfo.DeviceId;
-                existingAttendance.StudentId = studentId;
-                existingAttendance.LecturerId = updateInfo.LecturerId;
-                
-                
-                await _attendanceRepository.UpdateAsync(existingAttendance);
-                
-                updatedAttendances.Add(existingAttendance);
             }
+
+            // Ghi lại danh sách sinh viên (sẽ serialize sang AttendanceData)
+            existingAttendance.Students = updatedStudents;
+
+            await _attendanceRepository.UpdateAsync(existingAttendance);
+
+            // Gửi RPC
             var updateAttendanceRcp = new UpdateAttendanceRcpDto()
             {
                 LecturerId = updateInfo.LecturerId,
-                AttendanceStudents = attendanceStudents,
+                AttendanceStudents = attendanceStudentsDto,
                 DeviceId = updateInfo.DeviceId,
             };
 
@@ -254,40 +275,34 @@ namespace SCIC_BE.Services.Server
                 Console.WriteLine($"Error occurred while processing RPC request: {ex.Message}");
                 throw new Exception("Error occurred while processing RPC request");
             }
-          
-            return updatedAttendances;
+
+            return existingAttendance;
         }
 
         public async Task DeleteAttendanceAsync(Guid attendanceid)
         {
             var attendance = await _attendanceRepository.GetByAttendanceIdAsync(attendanceid)
                 ?? throw new Exception("Attendance info not found");
-            
+
             await _attendanceRepository.DeleteAsync(attendanceid);
         }
 
-        public async  Task UpdateStudentAttendancAsync(Guid deviceId, Guid studentId, string status)
+        public async Task UpdateStudentAttendancAsync(Guid deviceId, Guid studentId, string status)
         {
             var attendancesToday = await GetAttendancesByDeviceIdTodayAsync(deviceId);
             var currentTime = DateTime.Now;
 
             // Lọc buổi đang diễn ra (trong khoảng giờ điểm danh)
             var validAttendance = attendancesToday.FirstOrDefault(a =>
-                currentTime >= a.TimeStart && currentTime <= a.TimeEnd);
-
-            if (validAttendance == null)
-                throw new Exception("No ongoing attendance session found at this time.");
-
-            var targetStudent = validAttendance.Student
+                currentTime >= a.TimeStart && currentTime <= a.TimeEnd) ?? throw new Exception("No ongoing attendance session found at this time.");
+            var targetStudent = validAttendance.Students
                 .FirstOrDefault(s => s.Student.UserId == studentId);
 
             if (targetStudent == null)
                 throw new Exception("Student not found in attendance list.");
-            
+
             await _attendanceLogService.AddAttendanceLogAsync(studentId, deviceId, status);
             await _attendanceRepository.UpdateStudentAttentAsync(validAttendance.Id);
         }
-
-
     }
 }

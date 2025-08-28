@@ -9,7 +9,7 @@ public class AttendanceDTO
 {
     public Guid Id { get; set; }
     public LecturerDTO Lecturer { get; set; }
-    public List<AttendanceStudentDTO> Student { get; set; }
+    public List<AttendanceStudentDTO> Students { get; set; }
     public Guid DeviceId { get; set; }
     public DateTime TimeStart { get; set; }
     public DateTime TimeEnd { get; set; }

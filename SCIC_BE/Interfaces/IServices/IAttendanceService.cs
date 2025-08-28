@@ -15,7 +15,7 @@ namespace SCIC_BE.Interfaces.IServices
         Task<AttendanceDTO> GetAttendanceByStudentIdAsync(Guid studentId);
         Task<List<AttendanceDTO>> GetAttendancesByDeviceIdTodayAsync(Guid deviceId);
         Task<CreateAttendanceRCPDto> CreateAttendanceAsync(CreateAttendanceDTO attendanceInfo);
-        Task<List<AttendanceModel>> UpdateAttendanceAsync(Guid id, UpdateAttendanceDTO updateInfo);
+        Task<AttendanceModel> UpdateAttendanceAsync(Guid id, UpdateAttendanceDTO updateInfo);
         Task UpdateStudentAttendancAsync(Guid deviceId, Guid studentId, string status);
         Task DeleteAttendanceAsync(Guid attendanceid);
     }
