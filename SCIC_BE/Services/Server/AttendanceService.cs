@@ -296,13 +296,10 @@ namespace SCIC_BE.Services.Server
             var validAttendance = attendancesToday.FirstOrDefault(a =>
                 currentTime >= a.TimeStart && currentTime <= a.TimeEnd) ?? throw new Exception("No ongoing attendance session found at this time.");
             var targetStudent = validAttendance.Students
-                .FirstOrDefault(s => s.Student.UserId == studentId);
-
-            if (targetStudent == null)
-                throw new Exception("Student not found in attendance list.");
-
+                .FirstOrDefault(s => s.Student.UserId == studentId) ?? throw new Exception("Student not found in attendance list.");
             await _attendanceLogService.AddAttendanceLogAsync(studentId, deviceId, status);
-            await _attendanceRepository.UpdateStudentAttentAsync(validAttendance.Id);
+            await _attendanceRepository.UpdateStudentAttentAsync(validAttendance.Id, studentId);
+
         }
     }
 }

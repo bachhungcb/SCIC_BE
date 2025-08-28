@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SCIC_BE.Data;
@@ -8,7 +10,7 @@ using SCIC_BE.Models;
 
 namespace SCIC_BE.Repositories.AttendanceRepository
 {
-    public class AttendanceRepository :IAttendanceRepository
+    public class AttendanceRepository : IAttendanceRepository
     {
         private readonly ScicDbContext _context;
 
@@ -54,15 +56,25 @@ namespace SCIC_BE.Repositories.AttendanceRepository
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateStudentAttentAsync(Guid attendanceId)
+        public async Task UpdateStudentAttentAsync(Guid attendanceId, Guid studentId)
         {
-            var attendances = await GetByAttendanceIdAsync(attendanceId);
-            if (attendances == null)
+            var attendance = await _context.Attendances.FindAsync(attendanceId);
+            if (attendance == null)
                 throw new KeyNotFoundException("Attendance not found");
-            
-            attendances.IsAttended = true;
-            // Tìm student cụ thể trong danh sách
-            await _context.SaveChangesAsync();            
+
+            // Deserialize JSON
+            var students = JsonSerializer.Deserialize<List<AttendanceStudent>>(attendance.AttendanceData)
+                           ?? [];
+
+            var student = students.FirstOrDefault(s => s.StudentId == studentId) ?? throw new KeyNotFoundException("Student not found in this attendance");
+
+            // Update status
+            student.IsAttended = true;
+
+            // Serialize lại
+            attendance.AttendanceData = JsonSerializer.Serialize(students);
+
+            await _context.SaveChangesAsync();
         }
 
     }
