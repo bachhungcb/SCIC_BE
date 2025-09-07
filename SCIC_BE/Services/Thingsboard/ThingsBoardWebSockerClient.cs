@@ -20,7 +20,7 @@ public class ThingsBoardWebSocketClient
     private ClientWebSocket _webSocket;
     private readonly IHubContext<TelemetryHub> _hubContext;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    public ThingsBoardWebSocketClient(  string thingsboardWsUrl,
+    public ThingsBoardWebSocketClient(string thingsboardWsUrl,
                                         string jwtToken,
                                         string deviceId,
                                         IHubContext<TelemetryHub> hubContext,
@@ -122,7 +122,8 @@ public class ThingsBoardWebSocketClient
                         $"Close status: {result.CloseStatus}, Description: {result.CloseStatusDescription}");
                     await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty,
                         CancellationToken.None);
-                    return;
+                    return;  //?? -> break// <- - - - - - - - -
+                    //break;
                 }
 
                 ms.Write(buffer, 0, result.Count);
@@ -142,6 +143,7 @@ public class ThingsBoardWebSocketClient
             Console.WriteLine("Received telemetry update:");
             Console.WriteLine(message);
             await _hubContext.Clients.All.SendAsync("ReceiveTelemetry", message);
+
             // TODO: Xử lý dữ liệu telemetry ở đây
             try
             {
@@ -153,11 +155,12 @@ public class ThingsBoardWebSocketClient
                 Guid lectureId = new Guid(parseInner["lecturer_id"].ToString());
                 string status = parseInner["Status"].ToString();
                 Guid deviceId = new Guid(_deviceId);
-                
+
                 Console.WriteLine("DeviceId: " + _deviceId);
                 Console.WriteLine("LecturerId: " + lectureId);
                 Console.WriteLine("StudentId: " + userId);
                 Console.WriteLine("Status: " + status);
+
                 using var scope = _serviceScopeFactory.CreateScope();
                 var attendanceLogService = scope.ServiceProvider.GetRequiredService<IAttendanceLogService>();
                 var attendanceService = scope.ServiceProvider.GetRequiredService<IAttendanceService>();
@@ -171,6 +174,101 @@ public class ThingsBoardWebSocketClient
             {
                 Console.WriteLine("Lỗi khi phân tích JSON: " + ex.Message);
             }
+        }
+    }
+
+    private async Task ConnectAndSubscribeAsyncMQTT()// <- - - - - - - - -
+    {
+        string broker = _configuration["BaseURL"];// e.g., "demo.thingsboard.io"   <---- need to change
+        int port = 8883;
+        string clientId = Guid.NewGuid().ToString();
+        string topic = "TIMESERIES"; // <----- !!! need to change
+        string username = "mxngocqb@gmail.com";
+        string password = "Thingsboard1";
+
+        // Create a MQTT client factory
+        var factory = new MqttFactory();
+
+        // Create a MQTT client instance
+        var mqttClient = factory.CreateMqttClient();
+
+        // Create MQTT client options
+        var options = new MqttClientOptionsBuilder()
+            .WithTcpServer(broker, port) // MQTT broker address and port
+            .WithCredentials(username, password) // Set username and password
+            .WithClientId(clientId)
+            .WithCleanSession()
+            .WithTls(
+                o =>
+                {
+                    // The used public broker sometimes has invalid certificates. This sample accepts all
+                    // certificates. This should not be used in live environments.
+                    o.CertificateValidationHandler = _ => true;
+
+                    // The default value is determined by the OS. Set manually to force version.
+                    o.SslProtocol = SslProtocols.Tls12;
+                    
+                    // Please provide the file path of your certificate file. The current directory is /bin.
+                    var certificate = new X509Certificate("/opt/emqxsl-ca.crt", "");//X.509 Certificate Based Authentication in thingsboard
+                    o.Certificates = new List<X509Certificate> { certificate };
+                }
+            )
+            .Build();
+
+        // Connect to MQTT broker
+        var connectResult = await mqttClient.ConnectAsync(options);
+
+        if (connectResult.ResultCode == MqttClientConnectResultCode.Success)
+        {
+            Console.WriteLine("Connected to MQTT broker successfully.");
+
+            // Subscribe to a topic
+            await mqttClient.SubscribeAsync(topic);
+
+            // Callback function when a message is received
+            mqttClient.ApplicationMessageReceivedAsync += e =>
+            {
+                Console.WriteLine($"Received message: {Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment)}");
+                ReceiveMessagesAsyncMQTT(Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment));
+                return Task.CompletedTask;
+            };
+        }
+        else
+        {
+            Console.WriteLine($"Failed to connect to MQTT broker: {connectResult.ResultCode}");
+        }
+    }
+    
+    private async Task ReceiveMessagesAsyncMQTT(string message)// <- - - - - - - - -
+    {
+        try
+        {
+            JObject obj = JObject.Parse(message);
+            JToken token = obj["data"]["Attendance_check-in"][0][1];
+            JObject parseInner = JObject.Parse(token.ToString());
+
+            Guid userId = new Guid(parseInner["user_id"].ToString());
+            Guid lectureId = new Guid(parseInner["lecturer_id"].ToString());
+            string status = parseInner["Status"].ToString();
+            Guid deviceId = new Guid(_deviceId);
+
+            Console.WriteLine("DeviceId: " + _deviceId);
+            Console.WriteLine("LecturerId: " + lectureId);
+            Console.WriteLine("StudentId: " + userId);
+            Console.WriteLine("Status: " + status);
+
+            using var scope = _serviceScopeFactory.CreateScope();
+            var attendanceLogService = scope.ServiceProvider.GetRequiredService<IAttendanceLogService>();
+            var attendanceService = scope.ServiceProvider.GetRequiredService<IAttendanceService>();
+
+            // TODO: xử lý các giá trị ở đây (ghi log, lưu DB, v.v.)
+            await attendanceLogService.AddAttendanceLogAsync(lectureId, deviceId, status);
+            await attendanceService.UpdateStudentAttendancAsync(deviceId, userId, status);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Lỗi khi phân tích JSON: " + ex.Message);
         }
     }
 }
