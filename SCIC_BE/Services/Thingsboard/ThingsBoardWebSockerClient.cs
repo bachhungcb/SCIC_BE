@@ -265,8 +265,8 @@ public class ThingsBoardWebSocketClient
 
         // Configure MQTT client options
         var options = new MqttClientOptionsBuilder()
-        .WithClientId(Guid.NewGuid().ToString())
-        .WithTcpServer(broker, port)
+        .WithClientId(clientId)//Guid.NewGuid().ToString()
+        .WithTcpServer(broker,port)//port
         .WithCredentials(username, password) // Add username and password
         .WithClientId(clientId)
         //.WithTlsOptions(new MqttClientTlsOptionsBuilder()
@@ -281,7 +281,7 @@ public class ThingsBoardWebSocketClient
         mqttClient.ApplicationMessageReceivedAsync += e =>{
             Console.WriteLine("Received new message !  <----");
             Console.WriteLine($"Received message: {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-            ReceiveMessagesAsyncMQTT(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+            _ = Task.Run(()=>ReceiveMessagesAsyncMQTT(Encoding.UTF8.GetString(e.ApplicationMessage.Payload)));
             return Task.CompletedTask;
         };
         // Connect to the MQTT broker
@@ -337,5 +337,6 @@ public class ThingsBoardWebSocketClient
         {
             Console.WriteLine("Lỗi khi phân tích JSON: " + ex.Message);
         }
+        //return Task.CompletedTask;
     }
 }
