@@ -253,33 +253,35 @@ public class ThingsBoardWebSocketClient
         //     Console.WriteLine($"Failed to connect to MQTT broker: {connectResult.ResultCode}");
         // }
 
-        string broker = "http://tb.maxuanngoc.id.vn/";//_configuration["BaseURL"];// e.g., "demo.thingsboard.io"
-        int port = 8883;
-        string clientId = Guid.NewGuid().ToString();
-        string topic = "DTO";
-        string username = "mxngocqb@gmail.com";
-        string password = "Thingsboard1";
+        string broker = "tb.maxuanngoc.id.vn";//_configuration["BaseURL"];// e.g., "demo.thingsboard.io"
+        int port = 1883;//8883;
+        string clientId = "9ds31v8tagccnr3iquvx";
+        string topic = "v1/gateway/telemetry";//"v1/devices/me/telemetry";
+        string username = "MQTTserver";//"mxngocqb@gmail.com";
+        string password = "MQTTserver";//"Thingsboard1";
 
         // Load the root certificate
-        // var rootCert = new X509Certificate2("path_of _the_root_file");
+        //var rootCert = new X509Certificate2("path_of _the_root_file");
 
         // Configure MQTT client options
         var options = new MqttClientOptionsBuilder()
         .WithClientId(Guid.NewGuid().ToString())
         .WithTcpServer(broker, port)
         .WithCredentials(username, password) // Add username and password
-        .WithTlsOptions(new MqttClientTlsOptionsBuilder()
-        // .WithClientCertificates(new X509Certificate2Collection(rootCert))
+        .WithClientId(clientId)
+        //.WithTlsOptions(new MqttClientTlsOptionsBuilder()
+        //.WithClientCertificates(new X509Certificate2Collection(rootCert))
         //.WithAllowUntrustedCertificates(true)
-        .Build())
+        //.Build())
         .Build();
 
         var factory = new MqttClientFactory();
         var mqttClient = factory.CreateMqttClient();
 
         mqttClient.ApplicationMessageReceivedAsync += e =>{
-            Console.WriteLine("Connected successfully with MQTT broker.");
+            Console.WriteLine("Received new message !  <----");
             Console.WriteLine($"Received message: {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+            ReceiveMessagesAsyncMQTT(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
             return Task.CompletedTask;
         };
         // Connect to the MQTT broker
@@ -287,11 +289,12 @@ public class ThingsBoardWebSocketClient
         if (connectResult.ResultCode == MqttClientConnectResultCode.Success)
         {
             Console.WriteLine("Connected to MQTT broker successfully.");
-            var mqttSubscribeOptions = factory.CreateSubscribeOptionsBuilder()
-                .WithTopicFilter(new MqttTopicFilter().Topic=topic).Build();
+            
+            var mqttSubscribeOptions = factory.CreateSubscribeOptionsBuilder().WithTopicFilter(topic).Build();
 
-            await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
+            var response = await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
             Console.WriteLine("MQTT client subscribed to topic.");
+            Console.WriteLine(response);
         }
         else
         {
@@ -299,8 +302,8 @@ public class ThingsBoardWebSocketClient
         }
         
 
-        Console.WriteLine("Press enter to exit.");
-        Console.ReadLine();
+        //Console.WriteLine("Press enter to exit.");
+        //Console.ReadLine();
     }
 
     private async Task ReceiveMessagesAsyncMQTT(string message)// <- - - - - - - - -
