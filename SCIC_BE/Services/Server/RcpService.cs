@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -22,8 +23,8 @@ namespace SCIC_BE.Services.Server
 
         private class LoginResponse
         {
-            public string Token { get; set; }
-            public string RefreshToken { get; set; }
+            public required string Token { get; set; }
+            public required string RefreshToken { get; set; }
         }
 
         private async Task<string> LoginToThinkBoard()
@@ -37,8 +38,8 @@ namespace SCIC_BE.Services.Server
 
                 var requestBody = new
                 {
-                    username = "mxngocqb@gmail.com",  
-                    password = "Thingsboard1"         
+                    username = "mxngocqb@gmail.com",
+                    password = "Thingsboard1"
                 };
 
                 var content = new StringContent(
@@ -85,7 +86,7 @@ namespace SCIC_BE.Services.Server
         }
 
 
-        public async Task<string> SendRpcRequestAsync(RcpRequestDTO requestDto)
+        public async Task<string> SendRpcRequestAsync(RcpRequestDTO[] requestDtoArray)
         {
             var httpClient = _httpClientFactory.CreateClient();
 
@@ -97,68 +98,72 @@ namespace SCIC_BE.Services.Server
             }
 
             var baseUrl = _configuration["BaseURL"];
-            var url = $"{baseUrl}/api/rpc/oneway/{requestDto.DeviceId}";
-
-            // Tạo body yêu cầu
-            var requestBody = new
+            List<string> responses = new List<string>();// Danh sách để lưu phản hồi từ các yêu cầu       
+            foreach (var requestDto in requestDtoArray)// Lặp qua từng yêu cầu trong mảng
             {
-                method = requestDto.Method,
-                @params = requestDto.Params,
-                persistent = false,
-                timeout = 5000
-            };
+                var url = $"{baseUrl}/api/rpc/oneway/{requestDto.DeviceId}";
 
-            var content = new StringContent(
-                JsonConvert.SerializeObject(requestBody),
-                Encoding.UTF8,
-                "application/json"
-            );
+                // Tạo body yêu cầu
+                var requestBody = new
+                {
+                    method = requestDto.Method,
+                    @params = requestDto.Params,
+                    persistent = false,
+                    timeout = 5000
+                };
 
-            // Thiết lập header
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var content = new StringContent(
+                    JsonConvert.SerializeObject(requestBody),
+                    Encoding.UTF8,
+                    "application/json"
+                );
 
-            // Log headers của yêu cầu
-            Console.WriteLine("Request Headers:");
+                // Thiết lập header
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            foreach (var header in httpClient.DefaultRequestHeaders)
-            {
-                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
-            }
+                // Log headers của yêu cầu
+                Console.WriteLine("Request Headers:");
 
-            Console.WriteLine("Body: ", requestBody);
-
-            try
-            {
-                var response = await httpClient.PostAsync(url, content);
-
-                // Log headers của phản hồi
-                Console.WriteLine("Response Headers:");
-                foreach (var header in response.Headers)
+                foreach (var header in httpClient.DefaultRequestHeaders)
                 {
                     Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
                 }
 
-                // Kiểm tra mã trạng thái HTTP
-                if (!response.IsSuccessStatusCode)
+                Console.WriteLine("Body: ", requestBody);
+
+                try
                 {
-                    var errorResponse = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"RPC request failed. Status code: {response.StatusCode}, Error: {errorResponse}");
+                    var response = await httpClient.PostAsync(url, content);
+
+                    // Log headers của phản hồi
+                    Console.WriteLine("Response Headers:");
+                    foreach (var header in response.Headers)
+                    {
+                        Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                    }
+
+                    // Kiểm tra mã trạng thái HTTP
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errorResponse = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"RPC request failed. Status code: {response.StatusCode}, Error: {errorResponse}");
+                    }
+
+                    // Đọc nội dung phản hồi và trả về
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Response Body: " + responseContent);
+                    responses.Add(responseContent);// Lưu phản hồi vào danh sách
+                    //return responseContent;
                 }
-
-                // Đọc nội dung phản hồi và trả về
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Response Body: " + responseContent);
-
-                return responseContent;
+                catch (Exception ex)
+                {
+                    // Ghi log lỗi và ném lỗi
+                    Console.WriteLine($"Error occurred while sending RPC request: {ex.Message}");
+                    throw;
+                }
             }
-            catch (Exception ex)
-            {
-                // Ghi log lỗi và ném lỗi
-                Console.WriteLine($"Error occurred while sending RPC request: {ex.Message}");
-                throw;
-            }
+            return JsonConvert.SerializeObject(responses);// Trả về danh sách phản hồi dưới dạng JSON array
         }
-
     }
 }

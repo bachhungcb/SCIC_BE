@@ -44,9 +44,11 @@ public class ThingsBoardTelemetryService : IHostedService
 
 
             _tbClient = new ThingsBoardWebSocketClient(tbHost, token, deviceId, _hubContext, _serviceScopeFactory);
-            await _tbClient.ConnectAndSubscribeAsync();
 
-            Console.WriteLine("Connected and subscribed to ThingsBoard WebSocket.");
+            //await _tbClient.ConnectAndSubscribeAsync();// <- - - - - - - - -
+            await _tbClient.ConnectAndSubscribeAsyncMQTT();// <- - - - - - - - -
+            //Console.WriteLine("Connected and subscribed to ThingsBoard MQTT.");
+            //Console.WriteLine("Connected and subscribed to ThingsBoard WebSocket.");
         }
         catch (Exception ex)
         {

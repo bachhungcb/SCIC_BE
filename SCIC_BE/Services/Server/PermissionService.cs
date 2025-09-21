@@ -110,7 +110,7 @@ namespace SCIC_BE.Services.Server
 
                 try
                 {
-                    await _rcpService.SendRpcRequestAsync(rpcRequestDto);
+                    await _rcpService.SendRpcRequestAsync([rpcRequestDto]);
                 }
                 catch (Exception ex)
                 {
@@ -171,7 +171,7 @@ namespace SCIC_BE.Services.Server
 
                 try
                 {
-                    await _rcpService.SendRpcRequestAsync(rpcRequestDto);
+                    await _rcpService.SendRpcRequestAsync([rpcRequestDto]);
                 }
                 catch (Exception ex)
                 {
@@ -212,7 +212,7 @@ namespace SCIC_BE.Services.Server
                 try
                 {
                     // Gửi yêu cầu RPC
-                    await _rcpService.SendRpcRequestAsync(rcpRequestDto);
+                    await _rcpService.SendRpcRequestAsync([rcpRequestDto]);
                 }
                 catch (Exception ex)
                 {
