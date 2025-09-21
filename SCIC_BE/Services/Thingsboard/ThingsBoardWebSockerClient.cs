@@ -164,7 +164,7 @@ public class ThingsBoardWebSocketClient
 
                 // TODO: xử lý các giá trị ở đây (ghi log, lưu DB, v.v.)
                 await attendanceLogService.AddAttendanceLogAsync(lectureId, deviceId, status);
-                await attendanceService.UpdateStudentAttendancAsync(deviceId, userId, status);
+                await attendanceService.UpdateStudentAttendancAsync(deviceId, userId);
 
             }
             catch (Exception ex)

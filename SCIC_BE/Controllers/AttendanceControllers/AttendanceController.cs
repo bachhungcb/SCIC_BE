@@ -102,12 +102,12 @@ namespace SCIC_BE.Controllers.AttendanceControllers
             }
         }
 
-        [HttpPut("update-student-attendance/{deviceId:guid}/{studentId:guid}/{status}")]
-        public async Task<IActionResult> UpdateStudentAttendance(Guid deviceId, Guid studentId, string status)
+        [HttpPut("update-student-attendance/{attendanceId:guid}/{studentId:guid}")]
+        public async Task<IActionResult> UpdateStudentAttendance(Guid attendanceId, Guid studentId)
         {
             try
             {
-                await _attendanceService.UpdateStudentAttendancAsync(deviceId, studentId, status);
+                await _attendanceService.UpdateStudentAttendancAsync(attendanceId, studentId);
                 return Ok(new
                 {
                     message = "Update student attendance "
